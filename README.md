@@ -1,60 +1,77 @@
-# 🔄 Iterated Local Search (ILS)
+# 🚛 Capacitated Vehicle Routing Problem (CVRP) - Iterated Local Search (ILS)
 
-Este repositório contém uma implementação do algoritmo **Iterated Local Search (ILS)**, uma meta-heurística eficiente para resolver problemas de otimização combinatória. O ILS utiliza buscas locais repetitivas, intercaladas com perturbações controladas, permitindo escapar de mínimos locais e explorar o espaço de soluções de maneira mais eficaz.
+Este repositório contém uma implementação do algoritmo **Iterated Local Search (ILS)** para resolver o **Capacitated Vehicle Routing Problem (CVRP)**.
+O CVRP é um problema clássico de otimização que busca determinar as rotas mais eficientes para uma frota de veículos 🚐, levando em conta a capacidade limitada dos mesmos e as demandas dos clientes 📦.
 
-## ✨ Recursos
-- 🔍 **Busca Local**: Refina soluções através de heurísticas otimizadas.
-- 🔄 **Perturbação Inteligente**: Introduz modificações estruturadas para evitar estagnação.
-- 📈 **Critério de Aceitação**: Define quando uma solução perturbada deve ser aceita.
-- 🏗 **Fácil Customização**: Parâmetros ajustáveis para diferentes aplicações.
+## ✨ Características
+- 🔄 **Iterated Local Search (ILS)**: Metaheurística eficiente para encontrar boas soluções em tempo hábil.
+- ⚡ **Busca Local Aprimorada**: Utiliza heurísticas como 2-opt e Relocation para otimizar as rotas.
+- 🔧 **Parâmetros Configuráveis**: Ajuste a intensidade das perturbações e critérios de aceitação.
+- 📊 **Visualização de Resultados**: Gráficos e estatísticas para análise de desempenho.
 
 ## 🚀 Casos de Uso
-O ILS é amplamente utilizado em problemas como:
-- 🚚 **Roteamento de Veículos** (VRP)
-- 📅 **Escalonamento de Tarefas**
-- 📍 **Otimização de Redes**
-- 📦 **Problema da Mochila e Variações**
+Este repositório é ideal para:
+- 📚 Estudo e compreensão do CVRP e do ILS.
+- 🏎️ Resolução eficiente de instâncias de médio porte.
+- 📊 Comparar ILS com outras metaheurísticas como Simulated Annealing e Genetic Algorithms.
 
 ## 🏗 Estrutura do Projeto
 ```
-ILS-Algorithm/
-│── Benchmarks/    # Casos de teste e benchmarks
-│── src/           # Implementação do algoritmo
-│── Makefile       # Compilação automática
-│── README.md      # Documentação do projeto
+CapacitatedVehicleRoutingProblem-ILS/
+│── Benchmarks/    # Instâncias de teste
+│── src/           # Código-fonte do algoritmo
+│── results/       # Resultados e análises
+│── Makefile       # Compilação automatizada
+│── README.md      # Documentação
 ```
 
-## ⚙️ Execução
-Para compilar o projeto, use:
+## 🛠️ Compilação e Execução
+O projeto utiliza um `Makefile` para facilitar a compilação. Para construir o projeto, execute:
 ```
 make
 ```
-Para executar o algoritmo em uma instância de problema:
+Isso gerará um executável. Para executar o programa, use:
 ```
-./ils_solver input_file.txt
+./cvrp_solver_ils input_file.vrp
 ```
+Onde `input_file.vrp` é uma instância válida do problema contida no diretório `Benchmarks/`.
 
 ## 📌 Exemplo de Uso
 ```
-./bin/ils_solver Benchmarks/problem_1.txt Output/problem_1.sol
+./bin/cvrp_solver_ils Benchmarks/T/T-n5-k5.vrp Output/T/T-n5-k5.sol
 ```
+Este comando processa a instância do problema e gera a solução encontrada pelo algoritmo ILS.
 
-## 📊 Fluxo do Algoritmo
+## 🔀 Algoritmo Iterated Local Search (ILS)
+
+### 📋 Etapas Principais
+1. **Geração da Solução Inicial**: Utiliza heurísticas construtivas como Nearest Neighbor.
+2. **Busca Local**: Aplica-se otimizações como 2-opt e Relocation.
+3. **Perturbação**: Modifica a solução atual para escapar de ótimos locais.
+4. **Critério de Aceitação**: Define se a nova solução substitui a anterior.
+5. **Iteração**: Repete os passos até atingir um critério de parada.
+
+### 🔄 Diagrama do Fluxo do Algoritmo
 ```mermaid
 graph TD;
-    Start((Início)) -->|Gera solução inicial| InitialSolution;
-    InitialSolution -->|Aplica busca local| LocalSearch;
-    LocalSearch -->|Perturba solução| Perturbation;
-    Perturbation -->|Nova busca local| NewLocalSearch;
-    NewLocalSearch -->|Critério de aceitação| Acceptance;
-    Acceptance -->|Iteração ou parada| Decision;
-    Decision -->|Se critério atingido| End((Fim));
-    Decision -->|Caso contrário| Perturbation;
+    Start((Início)) -->|Geração da Solução Inicial| Init["Solução Inicial"];
+    Init -->|Busca Local| LocalSearch["Busca Local (2-opt, Relocation)"];
+    LocalSearch -->|Perturbação| Perturb["Perturbação Aleatória"];
+    Perturb -->|Nova Busca Local| LocalSearch2["Nova Busca Local"];
+    LocalSearch2 -->|Critério de Aceitação| Accept["Aceita solução?"];
+    Accept -- Sim --> BestUpdate["Atualiza Melhor Solução"];
+    Accept -- Não --> Perturb;
+    BestUpdate -->|Critério de Parada| Stop["Fim?"];
+    Stop -- Sim --> End((Fim));
+    Stop -- Não --> Perturb;
 ```
 
-## 📝 Notas
-- O algoritmo pode ser ajustado para diferentes problemas através da escolha da busca local e do método de perturbação.
-- Benchmarks estão disponíveis para teste e comparação de desempenho.
+## 📊 Análise de Resultados
+O repositório inclui scripts para visualizar e analisar o desempenho das soluções obtidas, permitindo comparar diferentes parâmetros e perturbações.
 
-Sinta-se à vontade para explorar e contribuir! 🚀
+## 🎯 Contribuições
+Contribuições são bem-vindas! Se quiser melhorar o algoritmo ou adicionar novas heurísticas, fique à vontade para abrir um **Pull Request**.
+
+---
+Sinta-se livre para explorar, experimentar e otimizar! 🛠️
 
