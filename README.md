@@ -55,19 +55,20 @@ This command processes the problem instance and outputs the solution found by th
 ```mermaid
 graph TD;
     Start((Start)) -->|Generate Initial Solution| Init[Initial Solution];
-    Init -->|Apply Local Search| LocalSearch[Local Search (2-opt, Swap)];
+    Init -->|Apply Local Search| LocalSearch[Local Search];
     LocalSearch -->|Store Best Solution| Best[Best Solution Found];
     
-    Best -->|Apply Perturbation| Perturb[Perturb Solution];
-    Perturb -->|Apply Local Search| LocalSearch2[Local Search on Perturbed Solution];
+    Best -->|Apply Perturbation| Perturb[Perturbation];
+    Perturb -->|Apply Local Search| LocalSearch2[Local Search on New Solution];
     
-    LocalSearch2 -->|Acceptance Criterion| Accept[Accept Solution?];
+    LocalSearch2 -->|Acceptance Criterion| Accept[Accept New Solution?];
     Accept -- Yes --> BestUpdate[Update Best Solution];
     Accept -- No --> Perturb;
     
-    BestUpdate -->|Stopping Criterion Met?| Stop[Stop?];
+    BestUpdate -->|Stopping Condition Met?| Stop[Stop?];
     Stop -- Yes --> End((End));
     Stop -- No --> Perturb;
+
 ```
 
 ## 📊 Class Diagram Overview
