@@ -1,77 +1,78 @@
-# 🚛 Capacitated Vehicle Routing Problem (CVRP) - Iterated Local Search (ILS)
+# 🚛 Capacitated Vehicle Routing Problem (CVRP) 
+# 🚩 Iterated Local Search (ILS)
 
-Este repositório contém uma implementação do algoritmo **Iterated Local Search (ILS)** para resolver o **Capacitated Vehicle Routing Problem (CVRP)**.
-O CVRP é um problema clássico de otimização que busca determinar as rotas mais eficientes para uma frota de veículos 🚐, levando em conta a capacidade limitada dos mesmos e as demandas dos clientes 📦.
+This repository contains an implementation of the **Iterated Local Search (ILS)** algorithm to solve the **Capacitated Vehicle Routing Problem (CVRP)**. 
+CVRP is a classic optimization problem that aims to determine the most efficient routes for a fleet of vehicles 🚐, considering their limited capacity and customer demands 📦.
 
-## ✨ Características
-- 🔄 **Iterated Local Search (ILS)**: Metaheurística eficiente para encontrar boas soluções em tempo hábil.
-- ⚡ **Busca Local Aprimorada**: Utiliza heurísticas como 2-opt e Relocation para otimizar as rotas.
-- 🔧 **Parâmetros Configuráveis**: Ajuste a intensidade das perturbações e critérios de aceitação.
-- 📊 **Visualização de Resultados**: Gráficos e estatísticas para análise de desempenho.
+## ✨ Features
+- 🔄 **Iterated Local Search (ILS)**: A metaheuristic for efficiently finding good solutions.
+- ⚡ **Enhanced Local Search**: Uses heuristics like 2-opt and Relocation to optimize routes.
+- 🔧 **Configurable Parameters**: Adjust perturbation intensity and acceptance criteria.
+- 📊 **Results Visualization**: Graphs and statistics for performance analysis.
 
-## 🚀 Casos de Uso
-Este repositório é ideal para:
-- 📚 Estudo e compreensão do CVRP e do ILS.
-- 🏎️ Resolução eficiente de instâncias de médio porte.
-- 📊 Comparar ILS com outras metaheurísticas como Simulated Annealing e Genetic Algorithms.
+## 🚀 Use Cases
+This repository is ideal for:
+- 📚 Studying and understanding CVRP and ILS.
+- 🏎️ Solving medium-sized problem instances efficiently.
+- 📊 Comparing ILS with other metaheuristics like Simulated Annealing and Genetic Algorithms.
 
-## 🏗 Estrutura do Projeto
+## 🏗 Project Structure
 ```
 CapacitatedVehicleRoutingProblem-ILS/
-│── Benchmarks/    # Instâncias de teste
-│── src/           # Código-fonte do algoritmo
-│── results/       # Resultados e análises
-│── Makefile       # Compilação automatizada
-│── README.md      # Documentação
+│── Benchmarks/    # Test instances
+│── src/           # Algorithm source code
+│── results/       # Results and analysis
+│── Makefile       # Automated compilation
+│── README.md      # Documentation
 ```
 
-## 🛠️ Compilação e Execução
-O projeto utiliza um `Makefile` para facilitar a compilação. Para construir o projeto, execute:
+## 🛠️ Compilation and Execution
+The project uses a `Makefile` for easy compilation. To build the project, run:
 ```
 make
 ```
-Isso gerará um executável. Para executar o programa, use:
+This will generate an executable. To run the program, use:
 ```
 ./cvrp_solver_ils input_file.vrp
 ```
-Onde `input_file.vrp` é uma instância válida do problema contida no diretório `Benchmarks/`.
+Where `input_file.vrp` is a valid problem instance located in the `Benchmarks/` directory.
 
-## 📌 Exemplo de Uso
+## 📌 Example Usage
 ```
 ./bin/cvrp_solver_ils Benchmarks/T/T-n5-k5.vrp Output/T/T-n5-k5.sol
 ```
-Este comando processa a instância do problema e gera a solução encontrada pelo algoritmo ILS.
+This command processes the problem instance and outputs the solution found by the ILS algorithm.
 
-## 🔀 Algoritmo Iterated Local Search (ILS)
+## 🔀 Iterated Local Search (ILS) Algorithm
 
-### 📋 Etapas Principais
-1. **Geração da Solução Inicial**: Utiliza heurísticas construtivas como Nearest Neighbor.
-2. **Busca Local**: Aplica-se otimizações como 2-opt e Relocation.
-3. **Perturbação**: Modifica a solução atual para escapar de ótimos locais.
-4. **Critério de Aceitação**: Define se a nova solução substitui a anterior.
-5. **Iteração**: Repete os passos até atingir um critério de parada.
+### 📋 Main Steps
+1. **Initial Solution Generation**: Uses constructive heuristics like Nearest Neighbor.
+2. **Local Search**: Applies optimizations such as 2-opt and Relocation.
+3. **Perturbation**: Modifies the current solution to escape local optima.
+4. **Acceptance Criterion**: Decides whether to accept the new solution.
+5. **Iteration**: Repeats until a stopping criterion is met.
 
-### 🔄 Diagrama do Fluxo do Algoritmo
+### 🔄 Algorithm Flowchart
 ```mermaid
 graph TD;
-    Start((Início)) -->|Geração da Solução Inicial| Init["Solução Inicial"];
-    Init -->|Busca Local| LocalSearch["Busca Local (2-opt, Relocation)"];
-    LocalSearch -->|Perturbação| Perturb["Perturbação Aleatória"];
-    Perturb -->|Nova Busca Local| LocalSearch2["Nova Busca Local"];
-    LocalSearch2 -->|Critério de Aceitação| Accept["Aceita solução?"];
-    Accept -- Sim --> BestUpdate["Atualiza Melhor Solução"];
-    Accept -- Não --> Perturb;
-    BestUpdate -->|Critério de Parada| Stop["Fim?"];
-    Stop -- Sim --> End((Fim));
-    Stop -- Não --> Perturb;
+    Start((Start)) -->|Generate Initial Solution| Init["Initial Solution"];
+    Init -->|Local Search| LocalSearch["Local Search (2-opt, Relocation)"];
+    LocalSearch -->|Perturbation| Perturb["Random Perturbation"];
+    Perturb -->|New Local Search| LocalSearch2["New Local Search"];
+    LocalSearch2 -->|Acceptance Criterion| Accept["Accept Solution?"];
+    Accept -- Yes --> BestUpdate["Update Best Solution"];
+    Accept -- No --> Perturb;
+    BestUpdate -->|Stopping Criterion| Stop["Stop?"];
+    Stop -- Yes --> End((End));
+    Stop -- No --> Perturb;
 ```
 
-## 📊 Análise de Resultados
-O repositório inclui scripts para visualizar e analisar o desempenho das soluções obtidas, permitindo comparar diferentes parâmetros e perturbações.
+## 📊 Results Analysis
+The repository includes scripts to visualize and analyze the performance of the obtained solutions, allowing comparison of different parameters and perturbation strategies.
 
-## 🎯 Contribuições
-Contribuições são bem-vindas! Se quiser melhorar o algoritmo ou adicionar novas heurísticas, fique à vontade para abrir um **Pull Request**.
+## 🎯 Contributions
+Contributions are welcome! If you want to improve the algorithm or add new heuristics, feel free to open a **Pull Request**.
 
 ---
-Sinta-se livre para explorar, experimentar e otimizar! 🛠️
+Feel free to explore, experiment, and optimize! 🛠️
 
