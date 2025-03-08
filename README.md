@@ -43,6 +43,106 @@ Where `input_file.vrp` is a valid problem instance located in the `Benchmarks/` 
 ```
 This command processes the problem instance and outputs the solution found by the ILS algorithm.
 
+## 📊 Class Diagram Overview
+
+```mermaid
+classDiagram
+    class Node {
+        +int id
+        +int demand
+        +bool isDepot
+        +bool isAvailable
+    }
+    
+    class Vehicle {
+        +int capacity
+        +int currentLoad
+        +vector<int> route
+        +addNode()
+        +reset()
+        +computeCost()
+    }
+
+    class CVRP {
+        +vector<Node> nodes 
+        +vector<double> distanceMatrix 
+        +int depotID
+        +int nodesDimension 
+        +int capacityOfVehicle 
+        +loadInstance()
+    }
+
+    class Solution {
+        +int totalCost
+        +vector<double> routeCosts
+        +vector<vector<int>> routes
+        +computeCost()
+        +printSolution()
+    }
+
+    class Solver {
+        +CVRP *instance
+        +Solution *bestSolution
+        +vector<vector<Node>> permutations
+        +generatePerturbation()
+        +solveILS()
+    }
+    
+    Node --* CVRP
+    Vehicle --* CVRP
+    CVRP --* Solver
+    Solution --* Solver
+```
+
+## 🔀 Activity Diagram
+```mermaid
+graph TD;
+    Start((Start)) -->|Generate Initial Solution| Init["Initial Solution"];
+    Init -->|Local Search| LocalSearch["Local Search (2-opt, Relocation)"];
+    LocalSearch -->|Perturbation| Perturb["Random Perturbation"];
+    Perturb -->|New Local Search| LocalSearch2["New Local Search"];
+    LocalSearch2 -->|Acceptance Criterion| Accept["Accept Solution?"];
+    Accept -- Yes --> BestUpdate["Update Best Solution"];
+    Accept -- No --> Perturb;
+    BestUpdate -->|Stopping Criterion| Stop["Stop?"];
+    Stop -- Yes --> End((End));
+    Stop -- No --> Perturb;
+```
+
+## ➡️ Sequence Diagram
+```mermaid
+sequenceDiagram;
+    participant Main
+    participant CVRP
+    participant Solver
+    participant Solution
+    Main->>CVRP: Create Instance
+    CVRP-->>Main: Instance Loaded
+    Main->>Solver: Create Solver
+    Solver->>Solver: Generate Perturbations
+    Solver->>Solution: Solve with ILS
+    Solution->>Solution: Compute Cost
+    Solution-->>Solver: Return Cost
+    Solver->>Solution: Print Solution
+    Solution->>Main: Done
+```
+
+## ↔️ Communication Diagram
+```mermaid
+graph LR;
+    Main -- Calls --> CVRP;
+    CVRP -- Used By --> Solver;
+    Main -- Calls --> Solver;
+    Solver -- Generates --> Perturbations;
+    Solver -- Calls --> Solution;
+    Solution -- Computes --> Cost;
+    Solution -- Outputs --> Result;
+```
+
+---
+Feel free to explore, experiment, and optimize! 🛠️
+
+
 ## 🔀 Iterated Local Search (ILS) Algorithm
 
 ### 📋 Main Steps
