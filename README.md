@@ -43,6 +43,33 @@ Where `input_file.vrp` is a valid problem instance located in the `Benchmarks/` 
 ```
 This command processes the problem instance and outputs the solution found by the ILS algorithm.
 
+## 🎡 General framework
+1. Generate Initial Solution → Create a feasible starting solution.
+2. Local Search → Apply heuristics like 2-opt or Swap to improve the solution.
+3. Store Best Solution → Save the best solution found so far.
+4. Perturbation → Modify the solution to escape local optima.
+5. Local Search on Perturbed Solution → Optimize the perturbed solution.
+6. Acceptance Criterion → Decide whether to accept the new solution.
+7. Stopping Condition → If met, the process ends; otherwise, the algorithm iterates again.
+
+```mermaid
+graph TD;
+    Start((Start)) -->|Generate Initial Solution| Init[Initial Solution];
+    Init -->|Apply Local Search| LocalSearch[Local Search (2-opt, Swap)];
+    LocalSearch -->|Store Best Solution| Best[Best Solution Found];
+    
+    Best -->|Apply Perturbation| Perturb[Perturb Solution];
+    Perturb -->|Apply Local Search| LocalSearch2[Local Search on Perturbed Solution];
+    
+    LocalSearch2 -->|Acceptance Criterion| Accept[Accept Solution?];
+    Accept -- Yes --> BestUpdate[Update Best Solution];
+    Accept -- No --> Perturb;
+    
+    BestUpdate -->|Stopping Criterion Met?| Stop[Stop?];
+    Stop -- Yes --> End((End));
+    Stop -- No --> Perturb;
+```
+
 ## 📊 Class Diagram Overview
 
 ```mermaid
