@@ -95,6 +95,14 @@ classDiagram
 ```
 
 ## 🔀 Activity Diagram
+
+### 📋 Main Steps
+1. **Initial Solution Generation**: Uses constructive heuristics like Nearest Neighbor.
+2. **Local Search**: Applies optimizations such as 2-opt and Relocation.
+3. **Perturbation**: Modifies the current solution to escape local optima.
+4. **Acceptance Criterion**: Decides whether to accept the new solution.
+5. **Iteration**: Repeats until a stopping criterion is met.
+   
 ```mermaid
 graph TD;
     Start((Start)) -->|Generate Initial Solution| Init["Initial Solution"];
@@ -140,32 +148,6 @@ graph LR;
 ```
 
 ---
-Feel free to explore, experiment, and optimize! 🛠️
-
-
-## 🔀 Iterated Local Search (ILS) Algorithm
-
-### 📋 Main Steps
-1. **Initial Solution Generation**: Uses constructive heuristics like Nearest Neighbor.
-2. **Local Search**: Applies optimizations such as 2-opt and Relocation.
-3. **Perturbation**: Modifies the current solution to escape local optima.
-4. **Acceptance Criterion**: Decides whether to accept the new solution.
-5. **Iteration**: Repeats until a stopping criterion is met.
-
-### 🔄 Algorithm Flowchart
-```mermaid
-graph TD;
-    Start((Start)) -->|Generate Initial Solution| Init["Initial Solution"];
-    Init -->|Local Search| LocalSearch["Local Search (2-opt, Relocation)"];
-    LocalSearch -->|Perturbation| Perturb["Random Perturbation"];
-    Perturb -->|New Local Search| LocalSearch2["New Local Search"];
-    LocalSearch2 -->|Acceptance Criterion| Accept["Accept Solution?"];
-    Accept -- Yes --> BestUpdate["Update Best Solution"];
-    Accept -- No --> Perturb;
-    BestUpdate -->|Stopping Criterion| Stop["Stop?"];
-    Stop -- Yes --> End((End));
-    Stop -- No --> Perturb;
-```
 
 ## 📊 Results Analysis
 The repository includes scripts to visualize and analyze the performance of the obtained solutions, allowing comparison of different parameters and perturbation strategies.
