@@ -1,7 +1,7 @@
-# 🚛 Capacitated Vehicle Routing Problem (CVRP) 
+# 🚛 Capacitated Vehicle Routing Problem (CVRP)
 # 🚩 A Iterated Local Search (ILS) Approach
 
-This repository contains an implementation of the **Iterated Local Search (ILS)** algorithm to solve the **Capacitated Vehicle Routing Problem (CVRP)**. 
+This repository contains an implementation of the **Iterated Local Search (ILS)** algorithm to solve the **Capacitated Vehicle Routing Problem (CVRP)**.
 CVRP is a classic optimization problem that aims to determine the most efficient routes for a fleet of vehicles 🚐, considering their limited capacity and customer demands 📦.
 
 ## ✨ Features
@@ -33,13 +33,13 @@ make
 ```
 This will generate an executable. To run the program, use:
 ```
-./cvrp_solver_ils input_file.vrp
+./cvrp_solver input_file.vrp
 ```
 Where `input_file.vrp` is a valid problem instance located in the `Benchmarks/` directory.
 
 ## 📌 Example Usage
 ```
-./bin/cvrp_solver_ils Benchmarks/T/T-n5-k5.vrp Output/T/T-n5-k5.sol
+./bin/cvrp_solver Benchmarks/T/T-n5-k5.vrp Output/T/T-n5-k5.sol
 ```
 This command processes the problem instance and outputs the solution found by the ILS algorithm.
 
@@ -130,7 +130,7 @@ classDiagram
 3. **Perturbation**: Modifies the current solution to escape local optima.
 4. **Acceptance Criterion**: Decides whether to accept the new solution.
 5. **Iteration**: Repeats until a stopping criterion is met.
-   
+
 ```mermaid
 graph TD;
     Start((Start)) -->|Generate Initial Solution| Init["Initial Solution"];
