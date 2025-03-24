@@ -2,5 +2,8 @@
 #pragma once
 
 #include "CVRP.h"
+#include "Solution.h"
 
 void printInstance(CVRP *cvrp);
+
+void printSolution(Solution *solution);

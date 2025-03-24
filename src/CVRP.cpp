@@ -16,6 +16,7 @@ CVRP::loadInstance(string fileName)
 
     this->nodesDimension = scanner->dimensionOfNodes;
     this->capacityOfVehicle = scanner->capacityOfVehicles;
+    this->depotID = scanner->depot;
 
     for (auto n : scanner->nodesDistance)
         this->distanceMatrix.push_back(n);

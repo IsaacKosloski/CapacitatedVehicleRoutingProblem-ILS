@@ -33,3 +33,21 @@ void printInstance(CVRP *cvrp)
 
     cout << "\n" << endl;
 }
+
+void printSolution(Solution *solution)
+{
+    int route = 1;
+    auto routes = solution->routes;
+
+    for (const auto &n : routes)
+    {
+        cout << "Route #" << route << ": ";
+        for (const auto &m : n)
+            cout << m << " ";
+        cout << endl;
+        route++;
+    }
+    cout << endl;
+    cout << "Cost " << solution->totalCost << endl;
+    cout << endl;
+}

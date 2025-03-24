@@ -4,10 +4,10 @@
 
 Solution::Solution()
 {
-    int currentLoad = 0;
-    int vehicleCount = 0;
+
 }
 
+/*
 double
 Solution::computeCost(int dimensionOfNodes, vector<double> &matrixCost)
 {
@@ -32,7 +32,51 @@ Solution::computeCost(int dimensionOfNodes, vector<double> &matrixCost)
     }
 
     return totalCost;
+}*/
+
+double Solution::computeCost(int dimensionOfNodes, vector<double> &matrixCost)
+{
+    totalCost = 0.0;
+    routesCosts.clear();  // Clear previous costs
+
+    for (const auto &route : routes)
+    {
+        if (route.size() < 2) // Skip empty or incomplete routes
+        {
+            cerr << "Warning: Route is too short to compute cost!" << endl;
+            continue;
+        }
+
+        double routeCost = 0.0;
+
+        for (size_t i = 0; i < route.size() - 1; ++i)
+        {
+            auto fromNode = route[i];
+            auto toNode = route[i + 1];
+
+            // Ensure matrix index is valid
+            if (fromNode < 0 || fromNode >= dimensionOfNodes || toNode < 0 || toNode >= dimensionOfNodes)
+            {
+                cerr << "Error: Invalid node index in route! [" << fromNode << " -> " << toNode << "]" << endl;
+                continue; // Skip invalid edges
+            }
+
+            routeCost += matrixCost[fromNode * dimensionOfNodes + toNode];
+        }
+
+        // Ensure the route **returns** to the depot
+        if (!route.empty() && route.back() != route.front())
+        {
+            routeCost += matrixCost[route.back() * dimensionOfNodes + route.front()];
+        }
+
+        routesCosts.push_back(routeCost);
+        totalCost += routeCost;
+    }
+
+    return totalCost;
 }
+
 
 void
 Solution::printSolution(const char* fileName, double elapsedTime, int iterations, int dimensionOfNodes)

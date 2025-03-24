@@ -13,6 +13,7 @@ public:
     int capacityOfVehicles;
     int col;
     int row;
+    int depot;
     string fileName;
     vector<Component> components;
     vector<Node> nodes;

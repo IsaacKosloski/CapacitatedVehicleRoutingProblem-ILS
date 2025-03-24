@@ -95,6 +95,7 @@ Scanner::readFile(const string &fileName, vector<Component> &components, vector<
         getline(inputFile, line);
         istringstream ssLine(line);
         ssLine >> ID;
+        this->depot = ID;
         if (ID - 1 >= 0 && ID - 1 < (int)nodes.size())
         {
             nodes[ID - 1].isDepot = true;

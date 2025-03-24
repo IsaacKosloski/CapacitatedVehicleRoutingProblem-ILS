@@ -1,12 +1,12 @@
-Route #1: 0 2 3 4 0 
-Route #2: 0 5 6 0 
+Route #1: 1 1 3 2 1 
+Route #2: 1 5 4 1 
 
-Cost 0
-Time 0.0001
+Cost 226.621
+Time 0.0814
 
 
  * Another infos *
 
- Iterations: 6 Time: 0.0001 sec - 0.0000 min - 0.0000 horas
-0.0000 h 0.0000 min
+ Iterations: 6 Time: 0.0814 sec - 0.0014 min - 0.0000 horas
+0.0000 h 0.0014 min
 Problem dimension: 6
