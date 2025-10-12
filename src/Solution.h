@@ -9,6 +9,7 @@ public:
 
     int fleetSize;
     double totalCost;
+    vector<int> routeLoads;
     vector<double> routesCosts;  // Total cost of the solution.
     vector<vector<int>> routes; // Each route corresponds to a vehicle’s route.
 

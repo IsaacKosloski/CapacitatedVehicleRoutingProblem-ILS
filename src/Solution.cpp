@@ -99,7 +99,7 @@ Solution::printSolution(const char* fileName, double elapsedTime, int iterations
         outputFile << "Cost " << totalCost << endl;
         outputFile << "Time " << fixed << setprecision(4) << elapsedTime << endl;
 
-        outputFile << "\n\n * Another infos *\n\n Iterations: " << iterations;
+        outputFile << "\n\n * Other infos *\n\n Iterations: " << iterations;
         outputFile << " Time: " << fixed << setprecision(4) << elapsedTime << " sec - " << elapsedTime/60 << " min - " << elapsedTime/3600 << " horas" << endl;
         outputFile << floor(elapsedTime/3600) << " h " << ((elapsedTime/3600) - floor(elapsedTime/3600)) * 60 << " min" << endl ;
         outputFile << "Problem dimension: " << dimensionOfNodes << endl;

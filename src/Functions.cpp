@@ -1,6 +1,8 @@
 /*Created by Isaac on 03/02/2025.*/
 #include "Functions.h"
 
+
+
 void printInstance(CVRP *cvrp)
 {
     int row(0);

@@ -106,6 +106,7 @@ void Solver::initialSolution_Greedy(CVRP *instance , Solution *initialSolution)
     vector<bool> visited(instance->nodesDimension, false);
 
     initialSolution->routes.clear();
+    initialSolution->routeLoads.clear();
     initialSolution->routes.push_back(vector<int>()); // Start with one vehicle
     initialSolution->routes[counterVehicles].push_back(instance->depotID); // Start at depot
     initialSolution->totalCost = 0;
@@ -134,6 +135,7 @@ void Solver::initialSolution_Greedy(CVRP *instance , Solution *initialSolution)
         {
             // Close current route by returning to depot
             initialSolution->routes[counterVehicles].push_back(instance->depotID);
+            initialSolution->routeLoads.push_back(currentCapacity);
             counterVehicles++;
             initialSolution->routes.push_back(vector<int>());
             initialSolution->routes[counterVehicles].push_back(instance->depotID);
@@ -150,6 +152,7 @@ void Solver::initialSolution_Greedy(CVRP *instance , Solution *initialSolution)
 
     // Close last vehicle's route
     initialSolution->routes[counterVehicles].push_back(instance->depotID);
+    initialSolution->routeLoads.push_back(currentCapacity);
     initialSolution->fleetSize = counterVehicles + 1;
 }
 
@@ -287,6 +290,132 @@ void Solver::localSearch_ThreeOpt(CVRP *instance, Solution *initialSolution, Sol
     }
 }
 
+void Solver::localSearch_SwapStar(CVRP *instance, Solution *solution, int chain_length)
+{
+    bool improvement = true;
+    const double epsilon = 1e-5; // Tolerance for floating point comparisons
+
+    while (improvement)
+    {
+        improvement = false;
+
+        for (size_t r1 = 0; r1 < solution->routes.size(); ++r1)
+        {
+            for (size_t r2 = 0; r2 < solution->routes.size(); ++r2)
+            {
+                vector<int>& sourceRoute = solution->routes[r1];
+                vector<int>& destRoute = solution->routes[r2];
+
+                for (size_t i = 1; (i + chain_length) < sourceRoute.size(); ++i)
+                {
+                    // 1. Check capacity feasibility first
+                    int chainDemand = 0;
+                    for (int k = 0; k < chain_length; ++k) {
+                        chainDemand += instance->nodes[sourceRoute[i + k]].demand;
+                    }
+
+                    if (r1 != r2 && solution->routeLoads[r2] + chainDemand > instance->capacityOfVehicle) {
+                        continue; // Skip if it violates capacity
+                    }
+
+                    for (size_t j = 1; j < destRoute.size(); ++j)
+                    {
+                        if (r1 == r2 && (j >= i && j <= i + chain_length)) {
+                            continue; // Avoid redundant intra-route moves
+                        }
+
+                        // 2. Calculate cost delta
+                        // Simplified delta calculation for clarity
+                        // See previous implementation for detailed breakdown
+                        double delta = calculate_swap_star_delta(instance, sourceRoute, destRoute, i, j, chain_length);
+
+                        // 3. If an improvement is found, execute it immediately
+                        if (delta < -epsilon)
+                        {
+                            // --- Execute the Move ---
+                            vector<int> chain(sourceRoute.begin() + i, sourceRoute.begin() + i + chain_length);
+
+                            if (r1 == r2) {
+                                // Handle complex intra-route index changes
+                                if (j < i) {
+                                    sourceRoute.erase(sourceRoute.begin() + i, sourceRoute.begin() + i + chain_length);
+                                    sourceRoute.insert(sourceRoute.begin() + j, chain.begin(), chain.end());
+                                } else { // j > i
+                                    // The insertion happens first at a higher index, so the original chain's start index doesn't shift
+                                    sourceRoute.insert(sourceRoute.begin() + j, chain.begin(), chain.end());
+                                    // The original chain is now shifted by chain_length positions
+                                    sourceRoute.erase(sourceRoute.begin() + i, sourceRoute.begin() + i + chain_length);
+                                }
+                            } else {
+                                // Inter-route move is simpler
+                                sourceRoute.erase(sourceRoute.begin() + i, sourceRoute.begin() + i + chain_length);
+                                destRoute.insert(destRoute.begin() + j, chain.begin(), chain.end());
+
+                                // Update route loads
+                                solution->routeLoads[r1] -= chainDemand;
+                                solution->routeLoads[r2] += chainDemand;
+                            }
+
+                            // Update total cost and signal an improvement
+                            solution->totalCost += delta;
+                            improvement = true;
+
+                            // Use goto to break out of all nested loops and restart the while loop
+                            // This is a common and efficient pattern in local search implementations.
+                            goto next_iteration;
+                        }
+                    }
+                }
+            }
+        }
+        next_iteration:; // Label for the goto jump
+    }
+}
+
+double Solver::calculate_swap_star_delta(CVRP *instance, const vector<int>& route1, const vector<int>& route2, int i, int j, int k)
+{
+    // Nodes from the source route
+    int A = route1[i - 1];
+    int B = route1[i];
+    int C = route1[i + k - 1];
+    int D = route1[i + k];
+
+    // Nodes from the destination route
+    int E = route2[j - 1];
+    int F = route2[j];
+
+    double costRemoved, costAdded;
+
+    if (&route1 == &route2) { // Check if they are the same route object
+        // Intra-route delta calculation (can be complex, this is a simplified version)
+        if (j < i) {
+            costRemoved = instance->distanceMatrix[A * instance->nodesDimension + B] +
+                          instance->distanceMatrix[C * instance->nodesDimension + D] +
+                          instance->distanceMatrix[E * instance->nodesDimension + F];
+            costAdded = instance->distanceMatrix[E * instance->nodesDimension + B] +
+                        instance->distanceMatrix[C * instance->nodesDimension + F] +
+                        instance->distanceMatrix[A * instance->nodesDimension + D];
+        } else {
+             costRemoved = instance->distanceMatrix[A * instance->nodesDimension + B] +
+                          instance->distanceMatrix[C * instance->nodesDimension + D] +
+                          instance->distanceMatrix[E * instance->nodesDimension + F];
+            costAdded = instance->distanceMatrix[A * instance->nodesDimension + D] +
+                        instance->distanceMatrix[E * instance->nodesDimension + B] +
+                        instance->distanceMatrix[C * instance->nodesDimension + F];
+        }
+    } else {
+        // Inter-route delta calculation
+        costRemoved = instance->distanceMatrix[A * instance->nodesDimension + B] +
+                      instance->distanceMatrix[C * instance->nodesDimension + D] +
+                      instance->distanceMatrix[E * instance->nodesDimension + F];
+        costAdded = instance->distanceMatrix[A * instance->nodesDimension + D] +
+                    instance->distanceMatrix[E * instance->nodesDimension + B] +
+                    instance->distanceMatrix[C * instance->nodesDimension + F];
+    }
+
+    return costAdded - costRemoved;
+}
+
 
 void Solver::acceptanceCriterion_BestSolution(Solution *bestSolution, Solution *newSolution)
 {
@@ -294,10 +423,7 @@ void Solver::acceptanceCriterion_BestSolution(Solution *bestSolution, Solution *
     if (newSolution->totalCost < bestSolution->totalCost)
     {
         *bestSolution = *newSolution; // Update the best solution
-        cout << "New best solution found with cost: " << bestSolution->totalCost << endl;
+        //cout << "New best solution found with cost: " << bestSolution->totalCost << endl;
     }
-    else
-    {
-        cout << "New solution rejected. Current best cost remains: " << bestSolution->totalCost << endl;
-    }
+
 }

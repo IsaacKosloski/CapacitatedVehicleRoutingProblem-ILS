@@ -39,7 +39,7 @@ Scanner::readFile(const string &fileName, vector<Component> &components, vector<
         nodesDistance.resize(dimensionOfNodes * dimensionOfNodes);
 
         // Read node coordinates
-        while (getline(inputFile, line) && line != "DEMAND_SECTION ")
+        while (getline(inputFile, line) && (line.find("DEMAND_SECTION") == string::npos))
         {
             istringstream ssLine(line);
 
@@ -78,7 +78,7 @@ Scanner::readFile(const string &fileName, vector<Component> &components, vector<
         }
 
         // Read node demands
-        while(getline(inputFile, line) && line != "DEPOT_SECTION ")
+        while(getline(inputFile, line) && (line.find("DEPOT_SECTION") == string::npos))
         {
             istringstream ssLine(line);
             if (ssLine >> ID >> demand)

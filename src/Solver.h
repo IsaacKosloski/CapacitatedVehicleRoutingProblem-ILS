@@ -21,9 +21,12 @@ public:
     // Local Search
     void localSearch_TwoOpt(CVRP *instance , Solution *initialSolution, Solution *bestSolution);
     void localSearch_ThreeOpt(CVRP *instance , Solution *initialSolution, Solution *bestSolution);
+    void localSearch_SwapStar(CVRP *instance, Solution *solution, int chain_length);
     void localSearch_OrOpt();
     void localSearch_Realocation();
     void localSearch_LinKernighan();
+
+    double calculate_swap_star_delta(CVRP *instance, const vector<int>& route1, const vector<int>& route2, int i, int j, int k);
 
     // Perturbation
     void pertubation_DoubleBridge(CVRP *instance, Solution *bestSolution, Solution *perturbedSolution);
