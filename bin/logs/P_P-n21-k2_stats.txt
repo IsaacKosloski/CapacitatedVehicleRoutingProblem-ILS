@@ -1,0 +1,4 @@
+Instância: P-n21-k2
+Método: P
+Tempo total (s): .725875156
+Memória máxima (KB): 0

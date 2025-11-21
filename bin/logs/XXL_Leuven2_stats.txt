@@ -1,0 +1,4 @@
+Instância: Leuven2
+Método: XXL
+Tempo total (s): 1778.765101409
+Memória máxima (KB): 260072

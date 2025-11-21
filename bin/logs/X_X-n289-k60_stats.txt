@@ -1,0 +1,4 @@
+Instância: X-n289-k60
+Método: X
+Tempo total (s): 2.167948434
+Memória máxima (KB): 0

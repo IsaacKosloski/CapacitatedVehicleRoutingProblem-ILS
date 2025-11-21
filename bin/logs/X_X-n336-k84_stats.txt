@@ -1,0 +1,4 @@
+Instância: X-n336-k84
+Método: X
+Tempo total (s): 4.266316697
+Memória máxima (KB): 0

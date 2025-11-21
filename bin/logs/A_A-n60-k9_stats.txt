@@ -1,0 +1,4 @@
+Instância: A-n60-k9
+Método: A
+Tempo total (s): 1.779156621
+Memória máxima (KB): 0

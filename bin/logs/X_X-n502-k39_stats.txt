@@ -1,0 +1,4 @@
+Instância: X-n502-k39
+Método: X
+Tempo total (s): 8.631688069
+Memória máxima (KB): 0

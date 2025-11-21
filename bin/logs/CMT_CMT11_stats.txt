@@ -1,0 +1,4 @@
+Instância: CMT11
+Método: CMT
+Tempo total (s): 4.049519045
+Memória máxima (KB): 0

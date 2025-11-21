@@ -1,0 +1,4 @@
+Instância: X-n351-k40
+Método: X
+Tempo total (s): 6.736364977
+Memória máxima (KB): 0

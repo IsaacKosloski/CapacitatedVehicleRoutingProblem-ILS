@@ -1,0 +1,4 @@
+Instância: X-n186-k15
+Método: X
+Tempo total (s): 3.116164904
+Memória máxima (KB): 0

@@ -1,0 +1,4 @@
+Instância: X-n190-k8
+Método: X
+Tempo total (s): 8.698682348
+Memória máxima (KB): 0

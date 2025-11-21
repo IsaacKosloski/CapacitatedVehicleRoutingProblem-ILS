@@ -1,0 +1,4 @@
+Instância: A-n53-k7
+Método: SwapStar
+Tempo total (s): 1.235173295
+Memória máxima (KB): 0

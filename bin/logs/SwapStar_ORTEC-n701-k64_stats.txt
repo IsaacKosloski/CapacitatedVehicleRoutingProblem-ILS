@@ -1,0 +1,4 @@
+Instância: ORTEC-n701-k64
+Método: SwapStar
+Tempo total (s): 55.317047150
+Memória máxima (KB): 0

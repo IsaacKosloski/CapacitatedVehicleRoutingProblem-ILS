@@ -1,0 +1,4 @@
+Instância: P-n55-k7
+Método: P
+Tempo total (s): 1.039408602
+Memória máxima (KB): 0

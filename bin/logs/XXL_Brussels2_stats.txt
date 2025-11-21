@@ -1,0 +1,4 @@
+Instância: Brussels2
+Método: XXL
+Tempo total (s): 12099.552966933
+Memória máxima (KB): 4060240

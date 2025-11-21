@@ -1,0 +1,4 @@
+Instância: X-n298-k31
+Método: X
+Tempo total (s): 4.661197183
+Memória máxima (KB): 0

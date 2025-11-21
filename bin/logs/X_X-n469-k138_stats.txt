@@ -1,0 +1,4 @@
+Instância: X-n469-k138
+Método: X
+Tempo total (s): 1.865039246
+Memória máxima (KB): 0

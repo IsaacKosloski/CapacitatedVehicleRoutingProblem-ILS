@@ -1,0 +1,4 @@
+Instância: Flanders2
+Método: XXL
+Tempo total (s): 53561.615940107
+Memória máxima (KB): 15115372

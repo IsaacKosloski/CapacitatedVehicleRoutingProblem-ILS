@@ -1,0 +1,4 @@
+Instância: Li_21
+Método: Li
+Tempo total (s): 41.228542952
+Memória máxima (KB): 0

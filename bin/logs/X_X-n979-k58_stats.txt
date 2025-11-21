@@ -1,0 +1,4 @@
+Instância: X-n979-k58
+Método: X
+Tempo total (s): 32.792555611
+Memória máxima (KB): 11428

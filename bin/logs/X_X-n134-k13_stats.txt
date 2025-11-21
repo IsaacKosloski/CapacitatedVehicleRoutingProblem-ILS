@@ -1,0 +1,4 @@
+Instância: X-n134-k13
+Método: X
+Tempo total (s): 2.588438746
+Memória máxima (KB): 0

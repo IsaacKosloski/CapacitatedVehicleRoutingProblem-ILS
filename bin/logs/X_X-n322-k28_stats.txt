@@ -1,0 +1,4 @@
+Instância: X-n322-k28
+Método: X
+Tempo total (s): 5.105411545
+Memória máxima (KB): 0

@@ -1,0 +1,4 @@
+Instância: X-n294-k50
+Método: X
+Tempo total (s): 2.590648299
+Memória máxima (KB): 0

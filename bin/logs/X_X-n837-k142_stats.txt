@@ -1,0 +1,4 @@
+Instância: X-n837-k142
+Método: X
+Tempo total (s): 6.748500136
+Memória máxima (KB): 0

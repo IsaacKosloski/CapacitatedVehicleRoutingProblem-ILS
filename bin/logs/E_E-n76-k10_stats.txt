@@ -1,0 +1,4 @@
+Instância: E-n76-k10
+Método: E
+Tempo total (s): 1.553257514
+Memória máxima (KB): 0

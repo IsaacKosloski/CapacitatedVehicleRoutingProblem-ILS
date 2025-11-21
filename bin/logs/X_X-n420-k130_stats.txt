@@ -1,0 +1,4 @@
+Instância: X-n420-k130
+Método: X
+Tempo total (s): 1.663844491
+Memória máxima (KB): 0

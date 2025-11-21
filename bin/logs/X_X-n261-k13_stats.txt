@@ -1,0 +1,4 @@
+Instância: X-n261-k13
+Método: X
+Tempo total (s): 11.581813575
+Memória máxima (KB): 0

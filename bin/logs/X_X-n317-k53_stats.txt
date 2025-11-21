@@ -1,0 +1,4 @@
+Instância: X-n317-k53
+Método: X
+Tempo total (s): 3.223355267
+Memória máxima (KB): 0

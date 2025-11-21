@@ -1,0 +1,4 @@
+Instância: X-n548-k50
+Método: X
+Tempo total (s): 8.693064717
+Memória máxima (KB): 0

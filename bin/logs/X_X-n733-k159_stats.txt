@@ -1,0 +1,4 @@
+Instância: X-n733-k159
+Método: X
+Tempo total (s): 2.282311542
+Memória máxima (KB): 0

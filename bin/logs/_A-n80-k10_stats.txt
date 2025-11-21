@@ -1,0 +1,4 @@
+Instância: A-n80-k10
+Método: 
+Tempo total (s): .122042698
+Memória máxima (KB): 0

@@ -1,0 +1,4 @@
+Instância: X-n524-k153
+Método: X
+Tempo total (s): 5.177623578
+Memória máxima (KB): 0

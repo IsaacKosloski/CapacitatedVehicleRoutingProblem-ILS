@@ -1,0 +1,4 @@
+Instância: X-n411-k19
+Método: X
+Tempo total (s): 16.948659934
+Memória máxima (KB): 0

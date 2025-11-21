@@ -1,0 +1,4 @@
+Instância: X-n303-k21
+Método: X
+Tempo total (s): 5.897884438
+Memória máxima (KB): 0

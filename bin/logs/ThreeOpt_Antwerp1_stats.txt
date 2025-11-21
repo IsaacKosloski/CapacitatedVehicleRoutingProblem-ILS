@@ -1,0 +1,4 @@
+Instância: Antwerp1
+Método: ThreeOpt
+Tempo total (s): 6.549753145
+Memória máxima (KB): 713496

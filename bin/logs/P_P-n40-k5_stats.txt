@@ -1,0 +1,4 @@
+Instância: P-n40-k5
+Método: P
+Tempo total (s): 1.038351103
+Memória máxima (KB): 0

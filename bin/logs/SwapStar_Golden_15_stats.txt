@@ -1,0 +1,4 @@
+Instância: Golden_15
+Método: SwapStar
+Tempo total (s): 23.324186651
+Memória máxima (KB): 0

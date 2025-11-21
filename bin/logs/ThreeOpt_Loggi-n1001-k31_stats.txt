@@ -1,0 +1,4 @@
+Instância: Loggi-n1001-k31
+Método: ThreeOpt
+Tempo total (s): .346554858
+Memória máxima (KB): 11628

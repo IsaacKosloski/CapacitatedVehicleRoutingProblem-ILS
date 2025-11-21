@@ -1,0 +1,4 @@
+Instância: X-n685-k75
+Método: X
+Tempo total (s): 12.955005604
+Memória máxima (KB): 0

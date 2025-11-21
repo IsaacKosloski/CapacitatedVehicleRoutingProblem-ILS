@@ -1,0 +1,4 @@
+Instância: X-n513-k21
+Método: X
+Tempo total (s): 19.933276851
+Memória máxima (KB): 0

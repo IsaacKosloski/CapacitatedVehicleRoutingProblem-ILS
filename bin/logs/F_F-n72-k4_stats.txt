@@ -1,0 +1,4 @@
+Instância: F-n72-k4
+Método: F
+Tempo total (s): 1.863014025
+Memória máxima (KB): 0

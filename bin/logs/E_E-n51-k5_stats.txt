@@ -1,0 +1,4 @@
+Instância: E-n51-k5
+Método: E
+Tempo total (s): 1.038429727
+Memória máxima (KB): 0

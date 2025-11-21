@@ -1,0 +1,4 @@
+Instância: B-n57-k9
+Método: B
+Tempo total (s): 1.466888235
+Memória máxima (KB): 0

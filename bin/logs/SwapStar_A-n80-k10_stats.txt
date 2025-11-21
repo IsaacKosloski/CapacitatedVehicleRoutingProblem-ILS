@@ -1,0 +1,4 @@
+Instância: A-n80-k10
+Método: SwapStar
+Tempo total (s): 2.243729787
+Memória máxima (KB): 0

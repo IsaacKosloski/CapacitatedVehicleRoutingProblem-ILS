@@ -1,201 +1,245 @@
-/* Created by Isaac on 03/02/2025. */
+/**
+ * @file Solver.cpp
+ * @brief Implementação completa da classe Solver
+ * @author Isaac (Original), Melhorado em 2025
+ * @date 03/02/2025 (Original), Melhorado em Outubro/2025
+ */
 
 #include "Solver.h"
+#include <algorithm>
 #include <limits>
+#include <iostream>
+#include <cmath>
+#include <numeric>
 
-Solver::Solver()
+// ============================================================================
+// CONSTRUTOR E MÉTODOS DE SEED
+// ============================================================================
+
+Solver::Solver(unsigned int seed)
+    : rng(seed)
+    , dist(0.0, 1.0)
+    , currentSeed(seed)
 {
-
+    // Inicialização do gerador Mersenne Twister com a seed fornecida
 }
 
-/*/ Function to generate an initial solution using Greedy algorithm
-void
-Solver::initialSolution_Greedy(CVRP *instance , Solution *initialSolution)
+unsigned int Solver::getCurrentSeed() const
 {
-    cout << "\n## INITIAL SOLUTION ##\n" << endl;
-    int currentCapacity = 0; // To Update each route capacity
-    int counterVehicles = 0; // To Update the vehicles amount
-    int nextCustomer    = 0; // To Update the customers appended to the solution
-    int minimumCostumer = 0; // To Append the next customer
-    double minimumCost  = numeric_limits<double>::max();
-    initialSolution->routes.resize(instance->nodesDimension, vector<int>(instance->nodesDimension, 0));
+    return currentSeed;
+}
 
-    // Setting the first node as the Depot ID
-    initialSolution->routes[counterVehicles][0] = instance->depotID;
-    initialSolution->totalCost = 0;
+void Solver::setSeed(unsigned int seed)
+{
+    currentSeed = seed;
+    rng.seed(seed);
+}
 
-    for (int j = 0; j < instance->nodesDimension; j++)
+// ============================================================================
+// MÉTODOS AUXILIARES PRIVADOS
+// ============================================================================
+
+bool Solver::validateRouteCapacity(const std::vector<int>& route, CVRP* instance) const
+{
+    int load = 0;
+
+    // Ignora primeiro e último (depósitos)
+    for (size_t i = 1; i < route.size() - 1; ++i)
     {
-        cout << "J: " << j << endl;
-        for (int i = 0; i < instance->nodesDimension; i++)
+        int nodeID = route[i];
+        if (nodeID >= 0 && nodeID < instance->nodesDimension)
         {
-            cout << "I: " << i << " ";
-            if (currentCapacity + instance->nodes[i].demand > instance->capacityOfVehicle)
-            {
-                cout << "[1 true] ";
-                counterVehicles++;
-                nextCustomer = 0;
-                initialSolution->routes[counterVehicles][0] = instance->depotID;
-                cout << "\n#" << counterVehicles << ": " << initialSolution->routes[counterVehicles][0] << " ";
-            }
-            else
-                cout << "[1 false] ";
-
-            if (instance->distanceMatrix[((initialSolution->routes[counterVehicles][nextCustomer]) * instance->nodesDimension) + i] < minimumCost)
-            {
-                cout << "[2 true] ";
-                minimumCostumer = i;
-                minimumCost = instance->distanceMatrix[(j * instance->nodesDimension) + i];
-            }
-            else
-                cout << "[2 false] ";
-            cout << endl;
+            load += instance->nodes[nodeID].demand;
         }
-        cout << endl;
-        initialSolution->routes[counterVehicles][nextCustomer] = minimumCostumer;
-        //cout << initialSolution->routes[counterVehicles][nextCustomer] << " ";
-        currentCapacity += instance->nodes[minimumCostumer].demand;
-        initialSolution->totalCost += instance->distanceMatrix[(j * instance->nodesDimension) + minimumCostumer];
-        nextCustomer++;
     }
-    initialSolution->fleetSize = counterVehicles;
-}*/
 
-/*/ Function to generate an initial solution using Nearest Neighbor heuristic
-void
-Solver::initialSolutionNNH(CVRP *instance , Solution *solution)
+    return load <= instance->capacityOfVehicle;
+}
+
+int Solver::calculateRouteLoad(const std::vector<int>& route, CVRP* instance) const
 {
-    std::vector<Solution> routes;
-    std::vector<Node> remaining_customers = customers;
+    int load = 0;
 
-    while (!remaining_customers.empty()) {
-        Solution route;
-        int current_capacity = 0;
-        Node current_location = {0, 0, 0, 0}; // Depot
-
-        while (!remaining_customers.empty() && current_capacity < vehicle_capacity) {
-            // Find the nearest customer
-            auto nearest = std::min_element(remaining_customers.begin(), remaining_customers.end(),
-                                            [&](const Customer& a, const Customer& b) {
-                                                return distance(current_location, a) < distance(current_location, b);
-                                            });
-
-            if (current_capacity + nearest->demand <= vehicle_capacity) {
-                route.push_back(*nearest);
-                current_capacity += nearest->demand;
-                current_location = *nearest;
-                remaining_customers.erase(nearest);
-            } else {
-                break;
-            }
+    for (size_t i = 1; i < route.size() - 1; ++i)
+    {
+        int nodeID = route[i];
+        if (nodeID >= 0 && nodeID < instance->nodesDimension)
+        {
+            load += instance->nodes[nodeID].demand;
         }
-
-        routes.push_back(route);
     }
 
-}*/
+    return load;
+}
 
+// ============================================================================
+// SOLUÇÃO INICIAL - GREEDY
+// ============================================================================
 
-void Solver::initialSolution_Greedy(CVRP *instance , Solution *initialSolution)
+void Solver::initialSolution_Greedy(CVRP* instance, Solution* solution)
 {
     int currentCapacity = 0;
-    int counterVehicles = 0;
-    double minimumCost;
-    int minimumCostumer = -1;
+    int vehicleCount = 0;
+    double minCost;
+    int nearestCustomer = -1;
 
-    vector<bool> visited(instance->nodesDimension, false);
+    std::vector<bool> visited(instance->nodesDimension, false);
+    visited[instance->depotID] = true;
 
-    initialSolution->routes.clear();
-    initialSolution->routeLoads.clear();
-    initialSolution->routes.push_back(vector<int>()); // Start with one vehicle
-    initialSolution->routes[counterVehicles].push_back(instance->depotID); // Start at depot
-    initialSolution->totalCost = 0;
+    solution->routes.clear();
+    solution->routeLoads.clear();
+    solution->routes.push_back(std::vector<int>());
+    solution->routes[vehicleCount].push_back(instance->depotID);
+    solution->totalCost = 0.0;
 
-    for (int j = 0; j < instance->nodesDimension - 1; j++) // Exclude depot
+    int customersServed = 0;
+    const int totalCustomers = instance->nodesDimension - 1;
+
+    while (customersServed < totalCustomers)
     {
-        minimumCost = numeric_limits<double>::max();
-        minimumCostumer = -1;
+        minCost = std::numeric_limits<double>::max();
+        nearestCustomer = -1;
 
-        int lastCustomer = initialSolution->routes[counterVehicles].back();
+        int lastNode = solution->routes[vehicleCount].back();
 
-        for (int i = 1; i < instance->nodesDimension; i++) // Start from 1 to exclude depot
+        // Encontra cliente mais próximo não visitado que respeite capacidade
+        for (int i = 0; i < instance->nodesDimension; ++i)
         {
-            if (visited[i]) continue; // Skip if already assigned
+            if (visited[i] || instance->nodes[i].isDepot) continue;
 
-            double distance = instance->distanceMatrix[(lastCustomer * instance->nodesDimension) + i];
+            int demand = instance->nodes[i].demand;
+            double distance = instance->getDistance(lastNode, i);
 
-            if (currentCapacity + instance->nodes[i].demand <= instance->capacityOfVehicle && distance < minimumCost)
+            if (currentCapacity + demand <= instance->capacityOfVehicle &&
+                distance < minCost)
             {
-                minimumCostumer = i;
-                minimumCost = distance;
+                nearestCustomer = i;
+                minCost = distance;
             }
         }
 
-        if (minimumCostumer == -1)
+        // Se nenhum cliente encontrado, inicia nova rota
+        if (nearestCustomer == -1)
         {
-            // Close current route by returning to depot
-            initialSolution->routes[counterVehicles].push_back(instance->depotID);
-            initialSolution->routeLoads.push_back(currentCapacity);
-            counterVehicles++;
-            initialSolution->routes.push_back(vector<int>());
-            initialSolution->routes[counterVehicles].push_back(instance->depotID);
+            solution->routes[vehicleCount].push_back(instance->depotID);
+            solution->routeLoads.push_back(currentCapacity);
+
+            vehicleCount++;
+            solution->routes.push_back(std::vector<int>());
+            solution->routes[vehicleCount].push_back(instance->depotID);
             currentCapacity = 0;
-            j--; // Retry this iteration with a new vehicle
             continue;
         }
 
-        initialSolution->routes[counterVehicles].push_back(minimumCostumer);
-        currentCapacity += instance->nodes[minimumCostumer].demand;
-        visited[minimumCostumer] = true;
-        initialSolution->totalCost += minimumCost;
+        // Adiciona cliente à rota
+        solution->routes[vehicleCount].push_back(nearestCustomer);
+        currentCapacity += instance->nodes[nearestCustomer].demand;
+        visited[nearestCustomer] = true;
+        customersServed++;
     }
 
-    // Close last vehicle's route
-    initialSolution->routes[counterVehicles].push_back(instance->depotID);
-    initialSolution->routeLoads.push_back(currentCapacity);
-    initialSolution->fleetSize = counterVehicles + 1;
+    // Fecha última rota
+    solution->routes[vehicleCount].push_back(instance->depotID);
+    solution->routeLoads.push_back(currentCapacity);
+    solution->fleetSize = vehicleCount + 1;
+
+    // Calcula custo total
+    solution->computeCost(instance->nodesDimension, instance->distanceMatrix);
 }
 
+// ============================================================================
+// SOLUÇÃO INICIAL - RANDOM
+// ============================================================================
 
-void Solver::localSearch_TwoOpt(CVRP *instance, Solution *initialSolution, Solution *bestSolution)
+void Solver::initialSolution_Random(CVRP* instance, Solution* solution)
 {
-    *bestSolution = *initialSolution; // Start with the initial solution
+    // Cria lista de clientes
+    std::vector<int> customers;
+    for (int i = 0; i < instance->nodesDimension; ++i)
+    {
+        if (!instance->nodes[i].isDepot)
+            customers.push_back(i);
+    }
+
+    // Embaralha
+    std::shuffle(customers.begin(), customers.end(), rng);
+
+    // Constrói rotas
+    solution->routes.clear();
+    solution->routeLoads.clear();
+    solution->routes.push_back(std::vector<int>());
+    solution->routes[0].push_back(instance->depotID);
+
+    int currentCapacity = 0;
+    int vehicleCount = 0;
+
+    for (int customer : customers)
+    {
+        int demand = instance->nodes[customer].demand;
+
+        if (currentCapacity + demand > instance->capacityOfVehicle)
+        {
+            // Fecha rota atual
+            solution->routes[vehicleCount].push_back(instance->depotID);
+            solution->routeLoads.push_back(currentCapacity);
+
+            // Nova rota
+            vehicleCount++;
+            solution->routes.push_back(std::vector<int>());
+            solution->routes[vehicleCount].push_back(instance->depotID);
+            currentCapacity = 0;
+        }
+
+        solution->routes[vehicleCount].push_back(customer);
+        currentCapacity += demand;
+    }
+
+    // Fecha última rota
+    solution->routes[vehicleCount].push_back(instance->depotID);
+    solution->routeLoads.push_back(currentCapacity);
+    solution->fleetSize = vehicleCount + 1;
+
+    solution->computeCost(instance->nodesDimension, instance->distanceMatrix);
+}
+
+// ============================================================================
+// BUSCA LOCAL - 2-OPT
+// ============================================================================
+
+void Solver::localSearch_TwoOpt(CVRP* instance, Solution* solution, Solution* bestSolution)
+{
+    *bestSolution = *solution;
     bool improvement = true;
 
     while (improvement)
     {
         improvement = false;
 
-        // Iterate through all routes in the solution
-        for (auto &route : bestSolution->routes)
+        for (auto& route : bestSolution->routes)
         {
             int routeSize = route.size();
-            if (routeSize < 4) continue; // Ignore small routes (no swaps possible)
+            if (routeSize < 4) continue;
 
-            for (int i = 1; i < routeSize - 2; i++)
+            for (int i = 1; i < routeSize - 2; ++i)
             {
-                for (int j = i + 1; j < routeSize - 1; j++)
+                for (int j = i + 1; j < routeSize - 1; ++j)
                 {
-                    // Nodes before and after swap section
                     int A = route[i - 1], B = route[i];
                     int C = route[j], D = route[j + 1];
 
-                    // Current cost of the two edges
-                    double currentCost = instance->distanceMatrix[A * instance->nodesDimension + B] +
-                                         instance->distanceMatrix[C * instance->nodesDimension + D];
+                    double currentCost =
+                        instance->getDistance(A, B) +
+                        instance->getDistance(C, D);
 
-                    // New cost if we swap (reverse the segment)
-                    double newCost = instance->distanceMatrix[A * instance->nodesDimension + C] +
-                                     instance->distanceMatrix[B * instance->nodesDimension + D];
+                    double newCost =
+                        instance->getDistance(A, C) +
+                        instance->getDistance(B, D);
 
-                    if (newCost < currentCost)
+                    if (newCost < currentCost - EPSILON)
                     {
-                        // Perform the swap by reversing the segment
-                        reverse(route.begin() + i, route.begin() + j + 1);
-
-                        // Update solution cost
-                        bestSolution->computeCost(instance->nodesDimension, instance->distanceMatrix);
-
+                        std::reverse(route.begin() + i, route.begin() + j + 1);
+                        bestSolution->computeCost(instance->nodesDimension,
+                                                 instance->distanceMatrix);
                         improvement = true;
                     }
                 }
@@ -204,96 +248,233 @@ void Solver::localSearch_TwoOpt(CVRP *instance, Solution *initialSolution, Solut
     }
 }
 
-void Solver::pertubation_DoubleBridge(CVRP *instance, Solution *bestSolution, Solution *perturbedSolution)
+// ============================================================================
+// BUSCA LOCAL - 3-OPT
+// ============================================================================
+
+void Solver::localSearch_ThreeOpt(CVRP* instance, Solution* solution, Solution* bestSolution)
 {
-    // Step 1: Make a copy of the best solution
-    *perturbedSolution = *bestSolution;
-
-    // Step 2: Choose a route to modify
-    vector<int> &route = perturbedSolution->routes[0]; // Select the first route for simplicity
-    int routeSize = route.size();
-
-    // Ensure that we have enough nodes for a Double Bridge Move
-    if (routeSize < 8) return;
-
-    // Step 3: Select 4 random split points ensuring proper separation
-    int split1 = rand() % (routeSize / 4);
-    int split2 = split1 + (routeSize / 4);
-    int split3 = split2 + (routeSize / 4);
-    int split4 = split3 + (routeSize / 4);
-
-    // Step 4: Create the new order of segments
-    vector<int> newRoute;
-    newRoute.insert(newRoute.end(), route.begin(), route.begin() + split1);
-    newRoute.insert(newRoute.end(), route.begin() + split3, route.begin() + split4);
-    newRoute.insert(newRoute.end(), route.begin() + split2, route.begin() + split3);
-    newRoute.insert(newRoute.end(), route.begin() + split1, route.begin() + split2);
-    newRoute.insert(newRoute.end(), route.begin() + split4, route.end());
-
-    // Step 5: Apply the new order to the perturbed solution
-    perturbedSolution->routes[0] = newRoute;
-
-    // Step 6: Recalculate cost after the change
-    perturbedSolution->computeCost(instance->nodesDimension, instance->distanceMatrix);
-}
-
-void Solver::localSearch_ThreeOpt(CVRP *instance, Solution *initialSolution, Solution *bestSolution)
-{
-    *bestSolution = *initialSolution; // Copy the initial solution as the starting best
-    double bestCost = bestSolution->totalCost;
+    *bestSolution = *solution;
     bool improvement = true;
 
     while (improvement)
     {
         improvement = false;
 
-        // Iterate through all possible three-cut combinations
-        for (size_t i = 1; i < bestSolution->routes[0].size() - 3; i++)
+        for (auto& route : bestSolution->routes)
         {
-            for (size_t j = i + 1; j < bestSolution->routes[0].size() - 2; j++)
+            int routeSize = route.size();
+            if (routeSize < 6) continue;
+
+            for (int i = 1; i < routeSize - 4; ++i)
             {
-                for (size_t k = j + 1; k < bestSolution->routes[0].size() - 1; k++)
+                for (int j = i + 2; j < routeSize - 2; ++j)
                 {
-                    Solution newSolution = *bestSolution; // Copy current solution
-                    vector<int> &route = newSolution.routes[0];
-
-                    // Generate different 3-opt swaps
-                    vector<vector<int>> possibleRoutes = {
-                            route, // Keep the original route
-                            route, // Reverse (i, j)
-                            route, // Reverse (j, k)
-                            route, // Reverse (i, j) and (j, k)
-                            route, // Reverse entire segment (i, k)
-                    };
-
-                    reverse(possibleRoutes[1].begin() + i, possibleRoutes[1].begin() + j);
-                    reverse(possibleRoutes[2].begin() + j, possibleRoutes[2].begin() + k);
-                    reverse(possibleRoutes[3].begin() + i, possibleRoutes[3].begin() + j);
-                    reverse(possibleRoutes[3].begin() + j, possibleRoutes[3].begin() + k);
-                    reverse(possibleRoutes[4].begin() + i, possibleRoutes[4].begin() + k);
-
-                    for (auto &newRoute : possibleRoutes)
+                    for (int k = j + 2; k < routeSize; ++k)
                     {
-                        newSolution.routes[0] = newRoute;
-                        newSolution.computeCost(instance->nodesDimension, instance->distanceMatrix);
+                        std::vector<int> originalRoute = route;
+                        double originalCost = 0.0;
 
-                        if (newSolution.totalCost < bestCost)
+                        // Calcula custo original
+                        for (size_t idx = 0; idx < originalRoute.size() - 1; ++idx)
                         {
-                            *bestSolution = newSolution;
-                            bestCost = newSolution.totalCost;
-                            improvement = true;
+                            originalCost += instance->getDistance(
+                                originalRoute[idx],
+                                originalRoute[idx + 1]
+                            );
+                        }
+
+                        // Testa configurações 3-opt
+                        std::vector<std::vector<int>> configs(5, originalRoute);
+
+                        // Config 1: Reverte [i, j)
+                        std::reverse(configs[1].begin() + i, configs[1].begin() + j);
+
+                        // Config 2: Reverte [j, k)
+                        std::reverse(configs[2].begin() + j, configs[2].begin() + k);
+
+                        // Config 3: Reverte ambos
+                        std::reverse(configs[3].begin() + i, configs[3].begin() + j);
+                        std::reverse(configs[3].begin() + j, configs[3].begin() + k);
+
+                        // Config 4: Troca segmentos
+                        std::vector<int> seg1(configs[4].begin() + i, configs[4].begin() + j);
+                        std::vector<int> seg2(configs[4].begin() + j, configs[4].begin() + k);
+                        configs[4].erase(configs[4].begin() + i, configs[4].begin() + k);
+                        configs[4].insert(configs[4].begin() + i, seg2.begin(), seg2.end());
+                        configs[4].insert(configs[4].begin() + i + seg2.size(),
+                                        seg1.begin(), seg1.end());
+
+                        // Avalia configurações
+                        for (size_t c = 1; c < configs.size(); ++c)
+                        {
+                            double newCost = 0.0;
+                            for (size_t idx = 0; idx < configs[c].size() - 1; ++idx)
+                            {
+                                newCost += instance->getDistance(
+                                    configs[c][idx],
+                                    configs[c][idx + 1]
+                                );
+                            }
+
+                            if (newCost < originalCost - EPSILON)
+                            {
+                                route = configs[c];
+                                bestSolution->computeCost(instance->nodesDimension,
+                                                        instance->distanceMatrix);
+                                improvement = true;
+                                goto next_iteration_3opt;
+                            }
                         }
                     }
                 }
             }
         }
+        next_iteration_3opt:;
     }
 }
 
-void Solver::localSearch_SwapStar(CVRP *instance, Solution *solution, int chain_length)
+// ============================================================================
+// BUSCA LOCAL - OR-OPT
+// ============================================================================
+
+void Solver::localSearch_OrOpt(CVRP* instance, Solution* solution)
 {
     bool improvement = true;
-    const double epsilon = 1e-5; // Tolerance for floating point comparisons
+    const int maxSequenceSize = 3;
+
+    while (improvement)
+    {
+        improvement = false;
+
+        for (size_t r = 0; r < solution->routes.size(); ++r)
+        {
+            auto& route = solution->routes[r];
+            int routeSize = route.size();
+
+            for (int seqSize = 1; seqSize <= maxSequenceSize; ++seqSize)
+            {
+                for (int i = 1; i + seqSize < routeSize - 1; ++i)
+                {
+                    for (int j = 1; j < routeSize - 1; ++j)
+                    {
+                        if (j >= i && j < i + seqSize) continue;
+
+                        // Calcula delta
+                        int before_i = route[i - 1];
+                        int first_seq = route[i];
+                        int last_seq = route[i + seqSize - 1];
+                        int after_seq = route[i + seqSize];
+                        int before_j = route[j - 1];
+                        int at_j = route[j];
+
+                        double costRemoved =
+                            instance->getDistance(before_i, first_seq) +
+                            instance->getDistance(last_seq, after_seq) +
+                            instance->getDistance(before_j, at_j);
+
+                        double costAdded =
+                            instance->getDistance(before_i, after_seq) +
+                            instance->getDistance(before_j, first_seq) +
+                            instance->getDistance(last_seq, at_j);
+
+                        if (costAdded < costRemoved - EPSILON)
+                        {
+                            // Aplica movimento
+                            std::vector<int> sequence(route.begin() + i,
+                                                     route.begin() + i + seqSize);
+                            route.erase(route.begin() + i,
+                                      route.begin() + i + seqSize);
+
+                            int insertPos = (j > i) ? j - seqSize : j;
+                            route.insert(route.begin() + insertPos,
+                                       sequence.begin(), sequence.end());
+
+                            solution->computeCost(instance->nodesDimension,
+                                                instance->distanceMatrix);
+                            improvement = true;
+                            goto next_iteration_oropt;
+                        }
+                    }
+                }
+            }
+        }
+        next_iteration_oropt:;
+    }
+}
+
+// ============================================================================
+// BUSCA LOCAL - SWAP STAR
+// ============================================================================
+
+double Solver::calculateSwapStarDelta(CVRP* instance,
+                                     const std::vector<int>& route1,
+                                     const std::vector<int>& route2,
+                                     int i, int j, int k) const
+{
+    // Validação de índices
+    if (i < 1 || i + k > static_cast<int>(route1.size()) - 1 ||
+        j < 1 || j >= static_cast<int>(route2.size()))
+    {
+        return std::numeric_limits<double>::max();
+    }
+
+    int A = route1[i - 1];
+    int B = route1[i];
+    int C = route1[i + k - 1];
+    int D = (i + k < static_cast<int>(route1.size())) ? route1[i + k] : route1[0];
+
+    int E = route2[j - 1];
+    int F = route2[j];
+
+    double costRemoved, costAdded;
+
+    if (&route1 == &route2)
+    {
+        // Intra-rota
+        if (j < i)
+        {
+            costRemoved = instance->getDistance(A, B) +
+                         instance->getDistance(C, D) +
+                         instance->getDistance(E, F);
+
+            costAdded = instance->getDistance(E, B) +
+                       instance->getDistance(C, F) +
+                       instance->getDistance(A, D);
+        }
+        else if (j > i + k)
+        {
+            costRemoved = instance->getDistance(A, B) +
+                         instance->getDistance(C, D) +
+                         instance->getDistance(E, F);
+
+            costAdded = instance->getDistance(A, D) +
+                       instance->getDistance(E, B) +
+                       instance->getDistance(C, F);
+        }
+        else
+        {
+            return 0.0;
+        }
+    }
+    else
+    {
+        // Inter-rota
+        costRemoved = instance->getDistance(A, B) +
+                     instance->getDistance(C, D) +
+                     instance->getDistance(E, F);
+
+        costAdded = instance->getDistance(A, D) +
+                   instance->getDistance(E, B) +
+                   instance->getDistance(C, F);
+    }
+
+    return costAdded - costRemoved;
+}
+
+void Solver::localSearch_SwapStar(CVRP* instance, Solution* solution, int chainLength)
+{
+    bool improvement = true;
 
     while (improvement)
     {
@@ -303,127 +484,239 @@ void Solver::localSearch_SwapStar(CVRP *instance, Solution *solution, int chain_
         {
             for (size_t r2 = 0; r2 < solution->routes.size(); ++r2)
             {
-                vector<int>& sourceRoute = solution->routes[r1];
-                vector<int>& destRoute = solution->routes[r2];
+                std::vector<int>& sourceRoute = solution->routes[r1];
+                std::vector<int>& destRoute = solution->routes[r2];
 
-                for (size_t i = 1; (i + chain_length) < sourceRoute.size(); ++i)
+                for (int i = 1; i + chainLength <= static_cast<int>(sourceRoute.size()) - 1; ++i)
                 {
-                    // 1. Check capacity feasibility first
+                    // Calcula demanda da cadeia
                     int chainDemand = 0;
-                    for (int k = 0; k < chain_length; ++k) {
+                    for (int k = 0; k < chainLength; ++k)
+                    {
                         chainDemand += instance->nodes[sourceRoute[i + k]].demand;
                     }
 
-                    if (r1 != r2 && solution->routeLoads[r2] + chainDemand > instance->capacityOfVehicle) {
-                        continue; // Skip if it violates capacity
+                    // Verifica capacidade para inter-rota
+                    if (r1 != r2)
+                    {
+                        if (solution->routeLoads[r2] + chainDemand >
+                            instance->capacityOfVehicle)
+                        {
+                            continue;
+                        }
                     }
 
-                    for (size_t j = 1; j < destRoute.size(); ++j)
+                    for (int j = 1; j < static_cast<int>(destRoute.size()); ++j)
                     {
-                        if (r1 == r2 && (j >= i && j <= i + chain_length)) {
-                            continue; // Avoid redundant intra-route moves
+                        if (r1 == r2 && j >= i && j <= i + chainLength)
+                        {
+                            continue;
                         }
 
-                        // 2. Calculate cost delta
-                        // Simplified delta calculation for clarity
-                        // See previous implementation for detailed breakdown
-                        double delta = calculate_swap_star_delta(instance, sourceRoute, destRoute, i, j, chain_length);
+                        double delta = calculateSwapStarDelta(instance, sourceRoute,
+                                                             destRoute, i, j, chainLength);
 
-                        // 3. If an improvement is found, execute it immediately
-                        if (delta < -epsilon)
+                        if (delta < -EPSILON)
                         {
-                            // --- Execute the Move ---
-                            vector<int> chain(sourceRoute.begin() + i, sourceRoute.begin() + i + chain_length);
+                            // Extrai cadeia
+                            std::vector<int> chain(sourceRoute.begin() + i,
+                                                  sourceRoute.begin() + i + chainLength);
 
-                            if (r1 == r2) {
-                                // Handle complex intra-route index changes
-                                if (j < i) {
-                                    sourceRoute.erase(sourceRoute.begin() + i, sourceRoute.begin() + i + chain_length);
-                                    sourceRoute.insert(sourceRoute.begin() + j, chain.begin(), chain.end());
-                                } else { // j > i
-                                    // The insertion happens first at a higher index, so the original chain's start index doesn't shift
-                                    sourceRoute.insert(sourceRoute.begin() + j, chain.begin(), chain.end());
-                                    // The original chain is now shifted by chain_length positions
-                                    sourceRoute.erase(sourceRoute.begin() + i, sourceRoute.begin() + i + chain_length);
+                            if (r1 == r2)
+                            {
+                                // Intra-rota
+                                if (j < i)
+                                {
+                                    sourceRoute.erase(sourceRoute.begin() + i,
+                                                    sourceRoute.begin() + i + chainLength);
+                                    sourceRoute.insert(sourceRoute.begin() + j,
+                                                     chain.begin(), chain.end());
                                 }
-                            } else {
-                                // Inter-route move is simpler
-                                sourceRoute.erase(sourceRoute.begin() + i, sourceRoute.begin() + i + chain_length);
-                                destRoute.insert(destRoute.begin() + j, chain.begin(), chain.end());
+                                else
+                                {
+                                    sourceRoute.insert(sourceRoute.begin() + j,
+                                                     chain.begin(), chain.end());
+                                    sourceRoute.erase(sourceRoute.begin() + i,
+                                                    sourceRoute.begin() + i + chainLength);
+                                }
+                            }
+                            else
+                            {
+                                // Inter-rota
+                                sourceRoute.erase(sourceRoute.begin() + i,
+                                                sourceRoute.begin() + i + chainLength);
+                                destRoute.insert(destRoute.begin() + j,
+                                               chain.begin(), chain.end());
 
-                                // Update route loads
                                 solution->routeLoads[r1] -= chainDemand;
                                 solution->routeLoads[r2] += chainDemand;
                             }
 
-                            // Update total cost and signal an improvement
                             solution->totalCost += delta;
                             improvement = true;
-
-                            // Use goto to break out of all nested loops and restart the while loop
-                            // This is a common and efficient pattern in local search implementations.
-                            goto next_iteration;
+                            goto next_iteration_swap;
                         }
                     }
                 }
             }
         }
-        next_iteration:; // Label for the goto jump
+        next_iteration_swap:;
     }
 }
 
-double Solver::calculate_swap_star_delta(CVRP *instance, const vector<int>& route1, const vector<int>& route2, int i, int j, int k)
+// ============================================================================
+// PERTURBAÇÃO - DOUBLE BRIDGE
+// ============================================================================
+
+void Solver::perturbation_DoubleBridge(CVRP* instance,
+                                      Solution* bestSolution,
+                                      Solution* perturbedSolution)
 {
-    // Nodes from the source route
-    int A = route1[i - 1];
-    int B = route1[i];
-    int C = route1[i + k - 1];
-    int D = route1[i + k];
+    *perturbedSolution = *bestSolution;
 
-    // Nodes from the destination route
-    int E = route2[j - 1];
-    int F = route2[j];
-
-    double costRemoved, costAdded;
-
-    if (&route1 == &route2) { // Check if they are the same route object
-        // Intra-route delta calculation (can be complex, this is a simplified version)
-        if (j < i) {
-            costRemoved = instance->distanceMatrix[A * instance->nodesDimension + B] +
-                          instance->distanceMatrix[C * instance->nodesDimension + D] +
-                          instance->distanceMatrix[E * instance->nodesDimension + F];
-            costAdded = instance->distanceMatrix[E * instance->nodesDimension + B] +
-                        instance->distanceMatrix[C * instance->nodesDimension + F] +
-                        instance->distanceMatrix[A * instance->nodesDimension + D];
-        } else {
-             costRemoved = instance->distanceMatrix[A * instance->nodesDimension + B] +
-                          instance->distanceMatrix[C * instance->nodesDimension + D] +
-                          instance->distanceMatrix[E * instance->nodesDimension + F];
-            costAdded = instance->distanceMatrix[A * instance->nodesDimension + D] +
-                        instance->distanceMatrix[E * instance->nodesDimension + B] +
-                        instance->distanceMatrix[C * instance->nodesDimension + F];
-        }
-    } else {
-        // Inter-route delta calculation
-        costRemoved = instance->distanceMatrix[A * instance->nodesDimension + B] +
-                      instance->distanceMatrix[C * instance->nodesDimension + D] +
-                      instance->distanceMatrix[E * instance->nodesDimension + F];
-        costAdded = instance->distanceMatrix[A * instance->nodesDimension + D] +
-                    instance->distanceMatrix[E * instance->nodesDimension + B] +
-                    instance->distanceMatrix[C * instance->nodesDimension + F];
-    }
-
-    return costAdded - costRemoved;
-}
-
-
-void Solver::acceptanceCriterion_BestSolution(Solution *bestSolution, Solution *newSolution)
-{
-    // Compare total costs
-    if (newSolution->totalCost < bestSolution->totalCost)
+    // Aplica Double Bridge em todas as rotas adequadas
+    for (auto& route : perturbedSolution->routes)
     {
-        *bestSolution = *newSolution; // Update the best solution
-        //cout << "New best solution found with cost: " << bestSolution->totalCost << endl;
+        int routeSize = route.size();
+
+        if (routeSize < 8) continue;
+
+        // Gera 4 pontos de corte
+        std::uniform_int_distribution<int> splitDist(1, routeSize - 2);
+        std::vector<int> splits(4);
+
+        for (int& split : splits)
+            split = splitDist(rng);
+
+        std::sort(splits.begin(), splits.end());
+
+        // Garante separação
+        for (size_t i = 1; i < splits.size(); ++i)
+        {
+            if (splits[i] - splits[i-1] < 2)
+                splits[i] = splits[i-1] + 2;
+        }
+
+        // Reconstrói rota
+        std::vector<int> newRoute;
+        newRoute.insert(newRoute.end(), route.begin(), route.begin() + splits[0]);
+        newRoute.insert(newRoute.end(), route.begin() + splits[2], route.begin() + splits[3]);
+        newRoute.insert(newRoute.end(), route.begin() + splits[1], route.begin() + splits[2]);
+        newRoute.insert(newRoute.end(), route.begin() + splits[0], route.begin() + splits[1]);
+        newRoute.insert(newRoute.end(), route.begin() + splits[3], route.end());
+
+        route = newRoute;
     }
 
+    perturbedSolution->computeCost(instance->nodesDimension, instance->distanceMatrix);
+}
+
+// ============================================================================
+// PERTURBAÇÃO - RANDOM REMOVE INSERT
+// ============================================================================
+
+void Solver::perturbation_RandomRemoveInsert(CVRP* instance,
+                                            Solution* bestSolution,
+                                            Solution* perturbedSolution,
+                                            int numNodes)
+{
+    *perturbedSolution = *bestSolution;
+
+    if (perturbedSolution->routes.empty()) return;
+
+    std::vector<int> removedNodes;
+
+    // Remove nós
+    for (int n = 0; n < numNodes; ++n)
+    {
+        std::uniform_int_distribution<size_t> routeDist(0, perturbedSolution->routes.size() - 1);
+        size_t routeIdx = routeDist(rng);
+
+        auto& route = perturbedSolution->routes[routeIdx];
+        if (route.size() <= 2) continue;
+
+        std::uniform_int_distribution<size_t> nodeDist(1, route.size() - 2);
+        size_t nodeIdx = nodeDist(rng);
+
+        removedNodes.push_back(route[nodeIdx]);
+        route.erase(route.begin() + nodeIdx);
+
+        perturbedSolution->routeLoads[routeIdx] -= instance->nodes[removedNodes.back()].demand;
+    }
+
+    // Reinsere
+    for (int node : removedNodes)
+    {
+        int demand = instance->nodes[node].demand;
+        bool inserted = false;
+
+        std::vector<size_t> routeOrder(perturbedSolution->routes.size());
+        std::iota(routeOrder.begin(), routeOrder.end(), 0);
+        std::shuffle(routeOrder.begin(), routeOrder.end(), rng);
+
+        for (size_t r : routeOrder)
+        {
+            if (perturbedSolution->routeLoads[r] + demand <= instance->capacityOfVehicle)
+            {
+                auto& route = perturbedSolution->routes[r];
+                std::uniform_int_distribution<size_t> posDist(1, route.size() - 1);
+                size_t insertPos = posDist(rng);
+
+                route.insert(route.begin() + insertPos, node);
+                perturbedSolution->routeLoads[r] += demand;
+                inserted = true;
+                break;
+            }
+        }
+
+        if (!inserted)
+        {
+            std::vector<int> newRoute = {instance->depotID, node, instance->depotID};
+            perturbedSolution->routes.push_back(newRoute);
+            perturbedSolution->routeLoads.push_back(demand);
+            perturbedSolution->fleetSize++;
+        }
+    }
+
+    perturbedSolution->computeCost(instance->nodesDimension, instance->distanceMatrix);
+}
+
+// ============================================================================
+// CRITÉRIOS DE ACEITAÇÃO
+// ============================================================================
+
+bool Solver::acceptanceCriterion_BestImprovement(Solution* bestSolution,
+                                                 Solution* newSolution)
+{
+    if (newSolution->totalCost < bestSolution->totalCost - EPSILON)
+    {
+        *bestSolution = *newSolution;
+        return true;
+    }
+    return false;
+}
+
+bool Solver::acceptanceCriterion_SimulatedAnnealing(Solution* bestSolution,
+                                                    Solution* newSolution,
+                                                    double temperature)
+{
+    double delta = newSolution->totalCost - bestSolution->totalCost;
+
+    if (delta < -EPSILON)
+    {
+        *bestSolution = *newSolution;
+        return true;
+    }
+
+    if (temperature > EPSILON)
+    {
+        double probability = std::exp(-delta / temperature);
+        if (dist(rng) < probability)
+        {
+            *bestSolution = *newSolution;
+            return true;
+        }
+    }
+
+    return false;
 }

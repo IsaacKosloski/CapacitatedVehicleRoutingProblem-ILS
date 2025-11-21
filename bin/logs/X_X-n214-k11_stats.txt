@@ -1,0 +1,4 @@
+Instância: X-n214-k11
+Método: X
+Tempo total (s): 7.156653062
+Memória máxima (KB): 0

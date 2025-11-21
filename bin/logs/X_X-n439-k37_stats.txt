@@ -1,0 +1,4 @@
+Instância: X-n439-k37
+Método: X
+Tempo total (s): 7.838287410
+Memória máxima (KB): 0

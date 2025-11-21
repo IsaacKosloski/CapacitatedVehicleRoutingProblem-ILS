@@ -1,0 +1,4 @@
+Instância: B-n34-k5
+Método: B
+Tempo total (s): 1.258182150
+Memória máxima (KB): 0

@@ -1,0 +1,4 @@
+Instância: Loggi-n1001-k31
+Método: SwapStar
+Tempo total (s): 221.241876382
+Memória máxima (KB): 11628

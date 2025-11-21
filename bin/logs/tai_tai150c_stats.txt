@@ -1,0 +1,4 @@
+Instância: tai150c
+Método: tai
+Tempo total (s): 4.388384320
+Memória máxima (KB): 0

@@ -1,0 +1,4 @@
+Instância: X-n237-k14
+Método: X
+Tempo total (s): 7.032416174
+Memória máxima (KB): 0

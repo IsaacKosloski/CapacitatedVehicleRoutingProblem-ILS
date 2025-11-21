@@ -1,0 +1,4 @@
+Instância: X-n429-k61
+Método: X
+Tempo total (s): 3.852357765
+Memória máxima (KB): 0

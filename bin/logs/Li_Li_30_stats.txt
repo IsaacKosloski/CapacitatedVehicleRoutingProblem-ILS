@@ -1,0 +1,4 @@
+Instância: Li_30
+Método: Li
+Tempo total (s): 147.549790287
+Memória máxima (KB): 13112

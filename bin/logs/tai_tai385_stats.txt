@@ -1,0 +1,4 @@
+Instância: tai385
+Método: tai
+Tempo total (s): 9.376003701
+Memória máxima (KB): 0

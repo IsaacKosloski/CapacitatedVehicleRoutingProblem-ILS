@@ -1,0 +1,4 @@
+Instância: X-n716-k35
+Método: X
+Tempo total (s): 25.678970027
+Memória máxima (KB): 0

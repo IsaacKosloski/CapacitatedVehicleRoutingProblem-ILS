@@ -1,0 +1,4 @@
+Instância: F-n135-k7
+Método: F
+Tempo total (s): 8.388934609
+Memória máxima (KB): 0

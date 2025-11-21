@@ -1,0 +1,4 @@
+Instância: X-n106-k14
+Método: X
+Tempo total (s): 1.445788339
+Memória máxima (KB): 0

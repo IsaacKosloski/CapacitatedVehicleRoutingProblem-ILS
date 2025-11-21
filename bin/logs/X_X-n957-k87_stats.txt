@@ -1,0 +1,4 @@
+Instância: X-n957-k87
+Método: X
+Tempo total (s): 14.917599483
+Memória máxima (KB): 11972

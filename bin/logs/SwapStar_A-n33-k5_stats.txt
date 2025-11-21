@@ -1,0 +1,4 @@
+Instância: A-n33-k5
+Método: SwapStar
+Tempo total (s): .785327883
+Memória máxima (KB): 0

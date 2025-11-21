@@ -1,0 +1,4 @@
+Instância: X-n783-k48
+Método: X
+Tempo total (s): 20.593557121
+Memória máxima (KB): 0

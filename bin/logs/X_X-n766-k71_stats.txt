@@ -1,0 +1,4 @@
+Instância: X-n766-k71
+Método: X
+Tempo total (s): 13.169850919
+Memória máxima (KB): 0

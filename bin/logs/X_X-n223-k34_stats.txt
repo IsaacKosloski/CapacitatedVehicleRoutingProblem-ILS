@@ -1,0 +1,4 @@
+Instância: X-n223-k34
+Método: X
+Tempo total (s): 3.000043596
+Memória máxima (KB): 0

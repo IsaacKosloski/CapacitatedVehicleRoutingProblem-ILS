@@ -1,0 +1,4 @@
+Instância: X-n204-k19
+Método: X
+Tempo total (s): 2.789710659
+Memória máxima (KB): 0

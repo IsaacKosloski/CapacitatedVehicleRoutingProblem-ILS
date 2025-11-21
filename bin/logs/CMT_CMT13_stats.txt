@@ -1,0 +1,4 @@
+Instância: CMT13
+Método: CMT
+Tempo total (s): 3.957103730
+Memória máxima (KB): 0

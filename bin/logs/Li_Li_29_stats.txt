@@ -1,0 +1,4 @@
+Instância: Li_29
+Método: Li
+Tempo total (s): 100.259105873
+Memória máxima (KB): 12072

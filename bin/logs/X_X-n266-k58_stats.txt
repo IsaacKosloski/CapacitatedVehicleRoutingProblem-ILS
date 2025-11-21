@@ -1,0 +1,4 @@
+Instância: X-n266-k58
+Método: X
+Tempo total (s): .932051217
+Memória máxima (KB): 0

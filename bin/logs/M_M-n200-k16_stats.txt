@@ -1,0 +1,4 @@
+Instância: M-n200-k16
+Método: M
+Tempo total (s): 5.485201168
+Memória máxima (KB): 0

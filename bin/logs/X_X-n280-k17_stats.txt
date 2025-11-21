@@ -1,0 +1,4 @@
+Instância: X-n280-k17
+Método: X
+Tempo total (s): 8.574025057
+Memória máxima (KB): 0

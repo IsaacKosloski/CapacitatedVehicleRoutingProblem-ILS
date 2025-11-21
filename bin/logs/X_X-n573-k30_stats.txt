@@ -1,0 +1,4 @@
+Instância: X-n573-k30
+Método: X
+Tempo total (s): 22.333319696
+Memória máxima (KB): 0

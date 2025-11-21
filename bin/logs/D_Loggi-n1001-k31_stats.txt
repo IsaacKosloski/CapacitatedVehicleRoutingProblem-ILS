@@ -1,0 +1,4 @@
+Instância: Loggi-n1001-k31
+Método: D
+Tempo total (s): 71.228616441
+Memória máxima (KB): 12812

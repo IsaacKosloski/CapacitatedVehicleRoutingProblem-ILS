@@ -1,0 +1,4 @@
+Instância: A-n32-k5
+Método: 
+Tempo total (s): .124239396
+Memória máxima (KB): 0

@@ -1,0 +1,4 @@
+Instância: Antwerp1
+Método: XXL
+Tempo total (s): 347.534671071
+Memória máxima (KB): 614148

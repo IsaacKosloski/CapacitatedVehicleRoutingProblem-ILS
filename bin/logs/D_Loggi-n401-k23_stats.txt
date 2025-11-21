@@ -1,0 +1,4 @@
+Instância: Loggi-n401-k23
+Método: D
+Tempo total (s): 12.765251461
+Memória máxima (KB): 0

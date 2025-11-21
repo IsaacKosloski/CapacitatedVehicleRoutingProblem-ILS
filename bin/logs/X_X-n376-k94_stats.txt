@@ -1,0 +1,4 @@
+Instância: X-n376-k94
+Método: X
+Tempo total (s): 1.667266510
+Memória máxima (KB): 0

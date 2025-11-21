@@ -1,0 +1,4 @@
+Instância: X-n1001-k43
+Método: X
+Tempo total (s): 32.026896365
+Memória máxima (KB): 11688

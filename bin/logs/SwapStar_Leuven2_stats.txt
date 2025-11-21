@@ -1,0 +1,4 @@
+Instância: Leuven2
+Método: SwapStar
+Tempo total (s): .232569384
+Memória máxima (KB): 34560

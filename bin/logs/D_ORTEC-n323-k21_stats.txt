@@ -1,0 +1,4 @@
+Instância: ORTEC-n323-k21
+Método: D
+Tempo total (s): 7.859780119
+Memória máxima (KB): 0

@@ -1,0 +1,4 @@
+Instância: E-n23-k3
+Método: E
+Tempo total (s): .728739555
+Memória máxima (KB): 0

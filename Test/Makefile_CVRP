@@ -1,0 +1,38 @@
+
+# Makefile para CVRP Solver com modos inteligentes de compilação
+
+# Nome do executável
+TARGET = cvrp_solver
+
+# Código-fonte
+SRC = main.cpp
+
+# Compilador
+CXX = g++
+
+# Modos de compilação:
+# DEBUG      -> Sem otimizações, com debug symbols
+# BENCHMARK  -> Máxima performance local (-march=native)
+# RELEASE    -> Portável, com otimização segura
+
+MODE ?= RELEASE
+
+ifeq ($(MODE),DEBUG)
+    CXXFLAGS = -g -O0
+    MSG = "🔍 Modo DEBUG: sem otimização, com símbolos de debug"
+else ifeq ($(MODE),BENCHMARK)
+    CXXFLAGS = -O3 -march=native -mtune=native
+    MSG = "🚀 Modo BENCHMARK: otimização máxima para esta máquina"
+else ifeq ($(MODE),RELEASE)
+    CXXFLAGS = -O2 -march=x86-64 -mtune=generic
+    MSG = "📦 Modo RELEASE: código otimizado e portável"
+else
+    $(error ❌ Modo desconhecido: '$(MODE)'. Use DEBUG, BENCHMARK ou RELEASE.)
+endif
+
+all:
+	@echo $(MSG)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRC)
+
+clean:
+	rm -f $(TARGET)

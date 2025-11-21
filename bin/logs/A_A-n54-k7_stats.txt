@@ -1,0 +1,4 @@
+Instância: A-n54-k7
+Método: A
+Tempo total (s): 1.781992668
+Memória máxima (KB): 0

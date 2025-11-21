@@ -1,0 +1,4 @@
+Instância: Li_22
+Método: Li
+Tempo total (s): 29.260863279
+Memória máxima (KB): 0

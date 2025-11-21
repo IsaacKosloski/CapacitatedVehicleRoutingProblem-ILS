@@ -1,0 +1,4 @@
+Instância: X-n613-k62
+Método: X
+Tempo total (s): 10.852625227
+Memória máxima (KB): 0

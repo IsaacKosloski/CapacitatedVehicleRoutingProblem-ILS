@@ -1,0 +1,4 @@
+Instância: P-n60-k15
+Método: P
+Tempo total (s): .623224245
+Memória máxima (KB): 0

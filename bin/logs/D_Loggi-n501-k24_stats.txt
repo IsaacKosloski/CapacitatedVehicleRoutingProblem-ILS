@@ -1,0 +1,4 @@
+Instância: Loggi-n501-k24
+Método: D
+Tempo total (s): 17.291435408
+Memória máxima (KB): 0

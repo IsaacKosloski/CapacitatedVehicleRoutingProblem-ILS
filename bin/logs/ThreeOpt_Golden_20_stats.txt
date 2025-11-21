@@ -1,0 +1,4 @@
+Instância: Golden_20
+Método: ThreeOpt
+Tempo total (s): .115223867
+Memória máxima (KB): 0

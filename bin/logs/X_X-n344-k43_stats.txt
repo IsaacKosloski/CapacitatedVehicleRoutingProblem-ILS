@@ -1,0 +1,4 @@
+Instância: X-n344-k43
+Método: X
+Tempo total (s): 3.948474924
+Memória máxima (KB): 0

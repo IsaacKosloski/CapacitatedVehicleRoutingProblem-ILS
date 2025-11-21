@@ -1,0 +1,4 @@
+Instância: X-n916-k207
+Método: X
+Tempo total (s): 4.888776082
+Memória máxima (KB): 11424

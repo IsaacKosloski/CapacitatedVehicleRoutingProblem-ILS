@@ -1,0 +1,4 @@
+Instância: CMT7
+Método: CMT
+Tempo total (s): 1.996522680
+Memória máxima (KB): 0

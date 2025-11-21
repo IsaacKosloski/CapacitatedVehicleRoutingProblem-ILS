@@ -1,0 +1,4 @@
+Instância: X-n129-k18
+Método: X
+Tempo total (s): 1.757366227
+Memória máxima (KB): 0

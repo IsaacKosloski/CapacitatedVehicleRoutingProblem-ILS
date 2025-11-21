@@ -1,0 +1,4 @@
+Instância: X-n308-k13
+Método: X
+Tempo total (s): 13.753273945
+Memória máxima (KB): 0

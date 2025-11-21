@@ -1,0 +1,4 @@
+Instância: X-n247-k50
+Método: X
+Tempo total (s): 4.046792502
+Memória máxima (KB): 0

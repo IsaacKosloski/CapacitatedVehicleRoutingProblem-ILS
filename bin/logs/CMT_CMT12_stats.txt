@@ -1,0 +1,4 @@
+Instância: CMT12
+Método: CMT
+Tempo total (s): 2.398117653
+Memória máxima (KB): 0

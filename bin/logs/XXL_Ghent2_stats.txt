@@ -1,0 +1,4 @@
+Instância: Ghent2
+Método: XXL
+Tempo total (s): 7932.453951333
+Memória máxima (KB): 1994256

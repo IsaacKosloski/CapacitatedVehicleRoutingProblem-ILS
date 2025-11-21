@@ -1,0 +1,4 @@
+Instância: X-n327-k20
+Método: X
+Tempo total (s): 7.784247116
+Memória máxima (KB): 0

@@ -1,0 +1,4 @@
+Instância: E-n22-k4
+Método: E
+Tempo total (s): .415580045
+Memória máxima (KB): 0

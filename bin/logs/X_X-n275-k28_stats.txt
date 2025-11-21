@@ -1,0 +1,4 @@
+Instância: X-n275-k28
+Método: X
+Tempo total (s): 4.347612419
+Memória máxima (KB): 0

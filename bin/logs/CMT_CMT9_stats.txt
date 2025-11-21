@@ -1,0 +1,4 @@
+Instância: CMT9
+Método: CMT
+Tempo total (s): 3.542172266
+Memória máxima (KB): 0

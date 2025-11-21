@@ -1,0 +1,4 @@
+Instância: X-n819-k171
+Método: X
+Tempo total (s): 2.900582300
+Memória máxima (KB): 10828

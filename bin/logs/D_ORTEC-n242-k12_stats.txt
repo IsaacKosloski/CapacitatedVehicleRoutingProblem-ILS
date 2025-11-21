@@ -1,0 +1,4 @@
+Instância: ORTEC-n242-k12
+Método: D
+Tempo total (s): 8.266594532
+Memória máxima (KB): 0

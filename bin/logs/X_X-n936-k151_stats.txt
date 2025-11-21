@@ -1,0 +1,4 @@
+Instância: X-n936-k151
+Método: X
+Tempo total (s): 15.483543337
+Memória máxima (KB): 10728

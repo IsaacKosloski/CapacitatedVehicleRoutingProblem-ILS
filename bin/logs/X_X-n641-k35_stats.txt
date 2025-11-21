@@ -1,0 +1,4 @@
+Instância: X-n641-k35
+Método: X
+Tempo total (s): 17.573076942
+Memória máxima (KB): 0

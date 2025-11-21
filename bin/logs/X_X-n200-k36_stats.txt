@@ -1,0 +1,4 @@
+Instância: X-n200-k36
+Método: X
+Tempo total (s): 3.750894990
+Memória máxima (KB): 0

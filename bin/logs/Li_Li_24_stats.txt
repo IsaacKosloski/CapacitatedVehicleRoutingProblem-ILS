@@ -1,0 +1,4 @@
+Instância: Li_24
+Método: Li
+Tempo total (s): 57.757162296
+Memória máxima (KB): 0

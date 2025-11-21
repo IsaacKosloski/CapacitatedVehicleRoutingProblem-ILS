@@ -1,0 +1,4 @@
+Instância: Golden_10
+Método: Golden
+Tempo total (s): 7.062130197
+Memória máxima (KB): 0

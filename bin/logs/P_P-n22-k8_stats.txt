@@ -1,0 +1,4 @@
+Instância: P-n22-k8
+Método: P
+Tempo total (s): .206995315
+Memória máxima (KB): 0

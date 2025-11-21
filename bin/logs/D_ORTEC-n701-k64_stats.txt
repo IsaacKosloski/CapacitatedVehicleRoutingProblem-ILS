@@ -1,0 +1,4 @@
+Instância: ORTEC-n701-k64
+Método: D
+Tempo total (s): 10.964729765
+Memória máxima (KB): 0

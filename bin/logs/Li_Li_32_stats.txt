@@ -1,0 +1,4 @@
+Instância: Li_32
+Método: Li
+Tempo total (s): 214.283188242
+Memória máxima (KB): 15512

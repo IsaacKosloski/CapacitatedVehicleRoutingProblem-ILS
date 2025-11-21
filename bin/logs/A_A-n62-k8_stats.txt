@@ -1,0 +1,4 @@
+Instância: A-n62-k8
+Método: A
+Tempo total (s): 1.988093105
+Memória máxima (KB): 0

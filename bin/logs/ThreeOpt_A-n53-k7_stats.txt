@@ -1,0 +1,4 @@
+Instância: A-n53-k7
+Método: ThreeOpt
+Tempo total (s): .119589414
+Memória máxima (KB): 0

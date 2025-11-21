@@ -1,0 +1,4 @@
+Instância: CMT14
+Método: CMT
+Tempo total (s): 2.401665019
+Memória máxima (KB): 0

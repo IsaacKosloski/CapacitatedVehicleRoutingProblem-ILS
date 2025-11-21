@@ -1,0 +1,4 @@
+Instância: X-n242-k48
+Método: X
+Tempo total (s): 2.279509749
+Memória máxima (KB): 0

@@ -1,0 +1,4 @@
+Instância: ORTEC-n701-k64
+Método: ThreeOpt
+Tempo total (s): .114794805
+Memória máxima (KB): 0
