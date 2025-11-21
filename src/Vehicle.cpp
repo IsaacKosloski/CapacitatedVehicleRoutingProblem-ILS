@@ -32,7 +32,7 @@ Vehicle::computeCost(vector<int>& distanceMatrix, int dimension)
     if (route.empty()) return cost; // Handle the empty route
 
     for (auto n = this->route.begin(); n != this->route.end() - 1; n++)
-        cost = distanceMatrix[(n->ID * dimension) + next(n)->ID];
+        cost += distanceMatrix[(n->ID * dimension) + next(n)->ID];
 
     return cost;
 }

@@ -306,6 +306,21 @@ void Solver::localSearch_SwapStar(CVRP *instance, Solution *solution, int chain_
     int maxIterations = 1000; // Prevent infinite loops
     int iterations = 0;
 
+    // Ensure routeLoads is synchronized with routes
+    if (solution->routeLoads.size() != solution->routes.size())
+    {
+        solution->routeLoads.resize(solution->routes.size(), 0);
+        for (size_t r = 0; r < solution->routes.size(); ++r)
+        {
+            int load = 0;
+            for (size_t i = 1; i < solution->routes[r].size() - 1; ++i)
+            {
+                load += instance->nodes[solution->routes[r][i]].demand;
+            }
+            solution->routeLoads[r] = load;
+        }
+    }
+
     while (improvement && iterations < maxIterations)
     {
         improvement = false;
