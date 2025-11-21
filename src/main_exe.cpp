@@ -32,7 +32,7 @@ int main(int argc, char **argv)
             solver->pertubation_DoubleBridge(cvrp, bestSolution, solution);
             //solver->localSearch_TwoOpt(cvrp, solution, solution);
             //solver->localSearch_ThreeOpt(cvrp, solution, bestSolution);
-            solver->localSearch_SwapStar(cvrp, bestSolution, 2);
+            solver->localSearch_SwapStar(cvrp, solution, 2);  // FIX: Apply to solution, not bestSolution
             solver->acceptanceCriterion_BestSolution(bestSolution, solution);
         }
 

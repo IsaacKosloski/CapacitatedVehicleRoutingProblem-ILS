@@ -209,29 +209,35 @@ void Solver::pertubation_DoubleBridge(CVRP *instance, Solution *bestSolution, So
     // Step 1: Make a copy of the best solution
     *perturbedSolution = *bestSolution;
 
-    // Step 2: Choose a route to modify
-    vector<int> &route = perturbedSolution->routes[0]; // Select the first route for simplicity
-    int routeSize = route.size();
+    // Step 2: Choose a route to modify (iterate through all routes)
+    for (size_t r = 0; r < perturbedSolution->routes.size(); ++r)
+    {
+        vector<int> route = perturbedSolution->routes[r]; // COPY to avoid iterator issues
+        int routeSize = route.size();
 
-    // Ensure that we have enough nodes for a Double Bridge Move
-    if (routeSize < 8) return;
+        // Ensure that we have enough nodes for a Double Bridge Move
+        if (routeSize < 8) continue;
 
-    // Step 3: Select 4 random split points ensuring proper separation
-    int split1 = rand() % (routeSize / 4);
-    int split2 = split1 + (routeSize / 4);
-    int split3 = split2 + (routeSize / 4);
-    int split4 = split3 + (routeSize / 4);
+        // Step 3: Select 4 random split points ensuring proper separation
+        int split1 = 1 + (rand() % (routeSize / 4));
+        int split2 = split1 + (rand() % (routeSize / 4));
+        int split3 = split2 + (rand() % (routeSize / 4));
+        int split4 = split3 + (rand() % (routeSize / 4));
 
-    // Step 4: Create the new order of segments
-    vector<int> newRoute;
-    newRoute.insert(newRoute.end(), route.begin(), route.begin() + split1);
-    newRoute.insert(newRoute.end(), route.begin() + split3, route.begin() + split4);
-    newRoute.insert(newRoute.end(), route.begin() + split2, route.begin() + split3);
-    newRoute.insert(newRoute.end(), route.begin() + split1, route.begin() + split2);
-    newRoute.insert(newRoute.end(), route.begin() + split4, route.end());
+        // Ensure splits are within bounds
+        if (split4 >= routeSize - 1) continue;
 
-    // Step 5: Apply the new order to the perturbed solution
-    perturbedSolution->routes[0] = newRoute;
+        // Step 4: Create the new order of segments using COPIED route
+        vector<int> newRoute;
+        newRoute.insert(newRoute.end(), route.begin(), route.begin() + split1);
+        newRoute.insert(newRoute.end(), route.begin() + split3, route.begin() + split4);
+        newRoute.insert(newRoute.end(), route.begin() + split2, route.begin() + split3);
+        newRoute.insert(newRoute.end(), route.begin() + split1, route.begin() + split2);
+        newRoute.insert(newRoute.end(), route.begin() + split4, route.end());
+
+        // Step 5: Apply the new order to the perturbed solution
+        perturbedSolution->routes[r] = newRoute;
+    }
 
     // Step 6: Recalculate cost after the change
     perturbedSolution->computeCost(instance->nodesDimension, instance->distanceMatrix);
@@ -242,10 +248,13 @@ void Solver::localSearch_ThreeOpt(CVRP *instance, Solution *initialSolution, Sol
     *bestSolution = *initialSolution; // Copy the initial solution as the starting best
     double bestCost = bestSolution->totalCost;
     bool improvement = true;
+    int maxIterations = 1000; // Prevent infinite loops
+    int iterations = 0;
 
-    while (improvement)
+    while (improvement && iterations < maxIterations)
     {
         improvement = false;
+        iterations++;
 
         // Iterate through all possible three-cut combinations
         for (size_t i = 1; i < bestSolution->routes[0].size() - 3; i++)
@@ -294,10 +303,13 @@ void Solver::localSearch_SwapStar(CVRP *instance, Solution *solution, int chain_
 {
     bool improvement = true;
     const double epsilon = 1e-5; // Tolerance for floating point comparisons
+    int maxIterations = 1000; // Prevent infinite loops
+    int iterations = 0;
 
-    while (improvement)
+    while (improvement && iterations < maxIterations)
     {
         improvement = false;
+        iterations++;
 
         for (size_t r1 = 0; r1 < solution->routes.size(); ++r1)
         {
