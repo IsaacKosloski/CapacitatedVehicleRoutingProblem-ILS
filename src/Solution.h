@@ -2,6 +2,10 @@
 #pragma once
 
 #include "CVRP.h"
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <cmath>
 
 class Solution
 {

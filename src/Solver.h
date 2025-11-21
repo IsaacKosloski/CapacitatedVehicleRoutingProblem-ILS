@@ -2,6 +2,8 @@
 #pragma once
 
 #include "Solution.h"
+#include <algorithm>
+#include <iostream>
 
 class Solver
 {

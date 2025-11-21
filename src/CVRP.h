@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Scanner.h"
+#include <iostream>
 
 // Represents the problem instance, containing all data related to nodes, vehicles, and distances.
 class CVRP
@@ -15,6 +16,7 @@ public:
     Scanner         *scanner;           // Scanner of data file.
 
     CVRP(string fileName);
+    ~CVRP();  // Destructor to free scanner memory
 
     void loadInstance(string fileName); // Method to load instance data (from file or manually).
 };

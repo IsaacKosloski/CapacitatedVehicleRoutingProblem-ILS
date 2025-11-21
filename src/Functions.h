@@ -3,6 +3,7 @@
 
 #include "CVRP.h"
 #include "Solution.h"
+#include <iostream>
 
 void printInstance(CVRP *cvrp);
 

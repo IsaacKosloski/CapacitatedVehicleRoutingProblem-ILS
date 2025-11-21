@@ -3,6 +3,9 @@
 #include "Functions.h"
 #include "Solver.h"
 #include <format>
+#include <iostream>
+#include <chrono>
+#include <string>
 
 
 #define MAX_ITERATIONS 10'000
@@ -10,6 +13,13 @@
 
 int main(int argc, char **argv)
 {
+    // Validate command line arguments
+    if (argc < 4) {
+        cerr << "Usage: " << argv[0] << " <input.vrp> <dimension> <set>" << endl;
+        cerr << "Example: " << argv[0] << " Benchmarks/A/A-n32-k5.vrp A-n32-k5 A" << endl;
+        return 1;
+    }
+
     // Setting Instance, Solver, and Solution
     auto *cvrp = new CVRP(argv[1]);
 

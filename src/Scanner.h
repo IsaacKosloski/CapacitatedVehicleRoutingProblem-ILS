@@ -5,6 +5,9 @@
 #include "Vehicle.h"
 #include <string>
 #include <sstream>
+#include <iostream>
+#include <fstream>
+#include <cmath>
 
 class Scanner
 {

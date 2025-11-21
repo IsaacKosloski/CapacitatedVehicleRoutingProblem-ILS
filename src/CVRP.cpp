@@ -7,6 +7,11 @@ CVRP::CVRP(string fileName)
     loadInstance(fileName);
 }
 
+CVRP::~CVRP()
+{
+    delete scanner;
+}
+
 void CVRP::loadInstance(string fileName)
 {
     scanner = new Scanner(fileName);

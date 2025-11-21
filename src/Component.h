@@ -1,10 +1,10 @@
 /*Created by Isaac on 30/01/2025.*/
 #pragma once
 
-#include <bits/stdc++.h> //This library is used to get a lot of functions and methods used by all code
+#include <vector>
+#include <string>
 
 using namespace std;
-using ::string;
 
 class Component
 {

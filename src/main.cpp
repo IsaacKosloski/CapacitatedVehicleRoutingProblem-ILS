@@ -2,12 +2,20 @@
 
 #include "Functions.h"
 #include "Solver.h"
+#include <iostream>
+#include <chrono>
 
 #define MAX_ITERATIONS 1000
 
 
 int main(int argc, char **argv)
 {
+    // Validate command line arguments
+    if (argc < 3) {
+        cerr << "Usage: " << argv[0] << " <input.vrp> <output.sol>" << endl;
+        return 1;
+    }
+
     // Setting Instance, Solver, and Solution
     auto *cvrp = new CVRP(argv[1]);
     auto *solver = new Solver();
@@ -19,12 +27,11 @@ int main(int argc, char **argv)
 
     // Solving the Problem by test and getting the best solution
     solver->initialSolution_Greedy(cvrp, solution);
-    //solver->localSearch_TwoOpt(cvrp, solution, bestSolution);
-    solver->localSearch_TwoOpt (cvrp, solution, bestSolution);
+    solver->localSearch_TwoOpt(cvrp, solution, bestSolution);
     for(int i = 0; i < MAX_ITERATIONS; i++)
     {
         solver->pertubation_DoubleBridge(cvrp, bestSolution, solution);
-        solver->localSearch_TwoOpt(cvrp, solution, solution);
+        solver->localSearch_TwoOpt(cvrp, solution, bestSolution);  // FIX: Use bestSolution as output
         solver->acceptanceCriterion_BestSolution(bestSolution, solution);
     }
 
