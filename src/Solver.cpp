@@ -154,6 +154,9 @@ void Solver::initialSolution_Greedy(CVRP *instance , Solution *initialSolution)
     initialSolution->routes[counterVehicles].push_back(instance->depotID);
     initialSolution->routeLoads.push_back(currentCapacity);
     initialSolution->fleetSize = counterVehicles + 1;
+
+    // Recalculate total cost accurately (including return to depot for all routes)
+    initialSolution->computeCost(instance->nodesDimension, instance->distanceMatrix);
 }
 
 
@@ -222,10 +225,14 @@ void Solver::pertubation_DoubleBridge(CVRP *instance, Solution *bestSolution, So
         if (routeSize < 8) continue;
 
         // Step 3: Select 4 random split points ensuring proper separation
-        int split1 = 1 + (rand() % (routeSize / 4));
-        int split2 = split1 + (rand() % (routeSize / 4));
-        int split3 = split2 + (rand() % (routeSize / 4));
-        int split4 = split3 + (rand() % (routeSize / 4));
+        // Use +1 to ensure minimum increment of 1 (avoid collapsed splits)
+        int maxSegment = (routeSize - 2) / 4;  // Divide available space into 4 segments
+        if (maxSegment < 1) maxSegment = 1;
+
+        int split1 = 1 + (rand() % maxSegment);
+        int split2 = split1 + 1 + (rand() % maxSegment);
+        int split3 = split2 + 1 + (rand() % maxSegment);
+        int split4 = split3 + 1 + (rand() % maxSegment);
 
         // Ensure splits are within bounds
         if (split4 >= routeSize - 1) continue;
