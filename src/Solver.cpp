@@ -161,10 +161,13 @@ void Solver::localSearch_TwoOpt(CVRP *instance, Solution *initialSolution, Solut
 {
     *bestSolution = *initialSolution; // Start with the initial solution
     bool improvement = true;
+    int maxIterations = 1000; // Prevent infinite loops
+    int iterations = 0;
 
-    while (improvement)
+    while (improvement && iterations < maxIterations)
     {
         improvement = false;
+        iterations++;
 
         // Iterate through all routes in the solution
         for (auto &route : bestSolution->routes)
@@ -256,41 +259,50 @@ void Solver::localSearch_ThreeOpt(CVRP *instance, Solution *initialSolution, Sol
         improvement = false;
         iterations++;
 
-        // Iterate through all possible three-cut combinations
-        for (size_t i = 1; i < bestSolution->routes[0].size() - 3; i++)
+        // Iterate through ALL routes (not just routes[0])
+        for (size_t routeIdx = 0; routeIdx < bestSolution->routes.size(); ++routeIdx)
         {
-            for (size_t j = i + 1; j < bestSolution->routes[0].size() - 2; j++)
+            vector<int> &currentRoute = bestSolution->routes[routeIdx];
+
+            // Skip routes that are too small for 3-opt
+            if (currentRoute.size() < 5) continue; // Need at least [depot, a, b, c, depot]
+
+            // Iterate through all possible three-cut combinations
+            for (size_t i = 1; i < currentRoute.size() - 3; i++)
             {
-                for (size_t k = j + 1; k < bestSolution->routes[0].size() - 1; k++)
+                for (size_t j = i + 1; j < currentRoute.size() - 2; j++)
                 {
-                    Solution newSolution = *bestSolution; // Copy current solution
-                    vector<int> &route = newSolution.routes[0];
-
-                    // Generate different 3-opt swaps
-                    vector<vector<int>> possibleRoutes = {
-                            route, // Keep the original route
-                            route, // Reverse (i, j)
-                            route, // Reverse (j, k)
-                            route, // Reverse (i, j) and (j, k)
-                            route, // Reverse entire segment (i, k)
-                    };
-
-                    reverse(possibleRoutes[1].begin() + i, possibleRoutes[1].begin() + j);
-                    reverse(possibleRoutes[2].begin() + j, possibleRoutes[2].begin() + k);
-                    reverse(possibleRoutes[3].begin() + i, possibleRoutes[3].begin() + j);
-                    reverse(possibleRoutes[3].begin() + j, possibleRoutes[3].begin() + k);
-                    reverse(possibleRoutes[4].begin() + i, possibleRoutes[4].begin() + k);
-
-                    for (auto &newRoute : possibleRoutes)
+                    for (size_t k = j + 1; k < currentRoute.size() - 1; k++)
                     {
-                        newSolution.routes[0] = newRoute;
-                        newSolution.computeCost(instance->nodesDimension, instance->distanceMatrix);
+                        Solution newSolution = *bestSolution; // Copy current solution
+                        vector<int> &route = newSolution.routes[routeIdx];
 
-                        if (newSolution.totalCost < bestCost)
+                        // Generate different 3-opt swaps
+                        vector<vector<int>> possibleRoutes = {
+                                route, // Keep the original route
+                                route, // Reverse (i, j)
+                                route, // Reverse (j, k)
+                                route, // Reverse (i, j) and (j, k)
+                                route, // Reverse entire segment (i, k)
+                        };
+
+                        reverse(possibleRoutes[1].begin() + i, possibleRoutes[1].begin() + j);
+                        reverse(possibleRoutes[2].begin() + j, possibleRoutes[2].begin() + k);
+                        reverse(possibleRoutes[3].begin() + i, possibleRoutes[3].begin() + j);
+                        reverse(possibleRoutes[3].begin() + j, possibleRoutes[3].begin() + k);
+                        reverse(possibleRoutes[4].begin() + i, possibleRoutes[4].begin() + k);
+
+                        for (auto &newRoute : possibleRoutes)
                         {
-                            *bestSolution = newSolution;
-                            bestCost = newSolution.totalCost;
-                            improvement = true;
+                            newSolution.routes[routeIdx] = newRoute;
+                            newSolution.computeCost(instance->nodesDimension, instance->distanceMatrix);
+
+                            if (newSolution.totalCost < bestCost)
+                            {
+                                *bestSolution = newSolution;
+                                bestCost = newSolution.totalCost;
+                                improvement = true;
+                            }
                         }
                     }
                 }
@@ -333,7 +345,8 @@ void Solver::localSearch_SwapStar(CVRP *instance, Solution *solution, int chain_
                 vector<int>& sourceRoute = solution->routes[r1];
                 vector<int>& destRoute = solution->routes[r2];
 
-                for (size_t i = 1; (i + chain_length) < sourceRoute.size(); ++i)
+                // Ensure chain doesn't include depot at the end (sourceRoute.size()-1 is depot)
+                for (size_t i = 1; (i + chain_length) <= sourceRoute.size() - 2; ++i)
                 {
                     // 1. Check capacity feasibility first
                     int chainDemand = 0;
@@ -401,6 +414,13 @@ void Solver::localSearch_SwapStar(CVRP *instance, Solution *solution, int chain_
 
 double Solver::calculate_swap_star_delta(CVRP *instance, const vector<int>& route1, const vector<int>& route2, int i, int j, int k)
 {
+    // Validate bounds before accessing
+    if (i - 1 < 0 || i + k >= (int)route1.size() || j - 1 < 0 || j >= (int)route2.size())
+    {
+        cerr << "Error: Invalid indices in calculate_swap_star_delta!" << endl;
+        return 0.0; // Return neutral delta if invalid
+    }
+
     // Nodes from the source route
     int A = route1[i - 1];
     int B = route1[i];
